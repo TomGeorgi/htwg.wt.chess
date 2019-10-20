@@ -1,0 +1,3 @@
+[submodule "lib/Chess"]
+	path = lib/Chess
+	url = https://github.com/TomGeorgi/Chess
