@@ -16,7 +16,7 @@ class ChessController @Inject()(cc: ControllerComponents) extends AbstractContro
   }
 
   def chess = Action {
-    Ok(chessAsText)
+    Ok(views.html.chess(gameController))
   }
 
   def set(row:Int, col:Int, row2:Int,col2:Int) = Action {

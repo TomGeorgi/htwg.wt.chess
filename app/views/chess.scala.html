@@ -1,0 +1,25 @@
+@(controller: de.htwg.se.Chess.controller.controllerComponent.ControllerInterface)
+
+@size = @{
+    controller.grid.size
+}
+
+@main("HTWG Chess") {
+    <div class="gamecontainer">
+        <div class="game">
+        @for(row <- 0 until size) {
+            <div class="row">
+                @row
+                @for(col <- 0 until size) {
+                    <span class="square@{col}">
+                        | @{ if(controller.grid.cell(row, col).isSet) { controller.grid.cell(row, col).toString.take(1) } else "_" }
+                    </span>
+                }
+            <span class="square-end">|</span>
+            </div>
+            <div class="clear"></div>
+        }
+            <div class="end-line">A B C D E F G H &nbsp;</div>
+        </div>
+    </div>
+}
