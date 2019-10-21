@@ -9,22 +9,16 @@
         <div class="game">
         @for(row <- 0 until size) {
             <div class="row">
-                @for(col <- 0 until size) {
-                    <span class="x">+---+</span>
-                }
-            </div>
-            <div class="row">
                 @(size - row)
                 @for(col <- 0 until size) {
                     <span class="square@{col}">
-                        | @{ if(controller.grid.cell(row, col).isSet) { controller.grid.cell(row, col).toString.take(1) } else "_" }
+                        | @{ if(controller.grid.cell(row, col).isSet) { controller.grid.cell(row, col).toString.take(1) } else "\u2212" } @{ if(col == size - 1) "|" }
                     </span>
                 }
-            <span class="square-end">|</span>
             </div>
             <div class="clear"></div>
         }
-            <div class="end-line">A B C D E F G H &nbsp;</div>
+            <div class="end-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;C&nbsp;&nbsp;&nbsp;&nbsp;D&nbsp;&nbsp;&nbsp;E&nbsp;&nbsp;&nbsp;F&nbsp;&nbsp;&nbsp;G&nbsp;&nbsp;&nbsp;H &nbsp;</div>
         </div>
     </div>
 }
