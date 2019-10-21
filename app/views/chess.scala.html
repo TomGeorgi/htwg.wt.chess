@@ -9,7 +9,12 @@
         <div class="game">
         @for(row <- 0 until size) {
             <div class="row">
-                @row
+                @for(col <- 0 until size) {
+                    <span class="x">+---+</span>
+                }
+            </div>
+            <div class="row">
+                @(size - row)
                 @for(col <- 0 until size) {
                     <span class="square@{col}">
                         | @{ if(controller.grid.cell(row, col).isSet) { controller.grid.cell(row, col).toString.take(1) } else "_" }
