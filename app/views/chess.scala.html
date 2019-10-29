@@ -5,20 +5,50 @@
 }
 
 @main("HTWG Chess") {
-    <div class="gamecontainer">
+    <h1 id="Inline-Title">Chess</h1>
+    <div class="game-container">
         <div class="game">
-        @for(row <- 0 until size) {
-            <div class="row">
-                @(size - row)
-                @for(col <- 0 until size) {
-                    <span class="square@{col}">
-                        | @{ if(controller.grid.cell(row, col).isSet) { controller.grid.cell(row, col).toString.take(1) } else "\u2212" } @{ if(col == size - 1) "|" }
+            @for(row <- 0 until size) {
+                <div class="row">
+                    <span class="number">
+                        @(size - row)
                     </span>
-                }
-            </div>
-            <div class="clear"></div>
-        }
-            <div class="end-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;C&nbsp;&nbsp;&nbsp;&nbsp;D&nbsp;&nbsp;&nbsp;E&nbsp;&nbsp;&nbsp;F&nbsp;&nbsp;&nbsp;G&nbsp;&nbsp;&nbsp;H &nbsp;</div>
+                    @for(col <- 0 until size) {
+                        <span class="square">
+                            @{
+                                if(controller.grid.cell(row, col).isSet) {
+                                    controller.grid.cell(row, col).toString.take(1)
+                                } else " "
+                            }
+                        </span>
+                    }
+                </div>
+                <div class="clear"></div>
+            }
+            <span class="empty"> </span>
+            @for(letter <- 'A' to 'H') {
+                <span class="letter" id="letter-@(letter)">@(letter)</span>
+            }
         </div>
     </div>
 }
+
+@*main("HTWG Chess") {*@
+@*    <h1 id="Title"> Chess </h1>*@
+@*    <div class="gamecontainer">*@
+@*        <div class="game">*@
+@*        @for(row <- 0 until size) {*@
+@*            <div class="row">*@
+@*                @(size - row)*@
+@*                @for(col <- 0 until size) {*@
+@*                    <span class="square">*@
+@*                        @{ if(controller.grid.cell(row, col).isSet) { controller.grid.cell(row, col).toString.take(1) } else " " }*@
+@*                    </span>*@
+@*                }*@
+@*            </div>*@
+@*            <div class="clear"></div>*@
+@*        }*@
+@*            <div class="end-line">A B C D E F G H</div>*@
+@*        </div>*@
+@*    </div>*@
+@*}*@

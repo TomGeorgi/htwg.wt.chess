@@ -22,16 +22,21 @@ class ChessController @Inject()(cc: ControllerComponents) extends AbstractContro
 
   def set(row:Int, col:Int, row2:Int,col2:Int) = Action {
     gameController.turn(row, col, row2, col2)
-    Ok(chessAsText)
+    Ok(views.html.chess(gameController))
   }
 
   def undo = Action {
     gameController.undo
-    Ok(chessAsText)
+    Ok(views.html.chess(gameController))
   }
 
   def redo = Action {
     gameController.redo
-    Ok(chessAsText)
+    Ok(views.html.chess(gameController))
+  }
+
+  def new_game(playerOne: String, playerTwo: String) = Action {
+    gameController.createNewGrid(playerOne, playerTwo)
+    Ok(views.html.chess(gameController))
   }
 }
