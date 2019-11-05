@@ -1,88 +1,159 @@
-@(controller: de.htwg.se.Chess.controller.controllerComponent.ControllerInterface)
+@import de.htwg.se.Chess.controller.controllerComponent.GameStatus._
+
+@(controller: de.htwg.se.Chess.controller.controllerComponent.ControllerInterface, message: String)
 
 @size = @{
     controller.grid.size
 }
 
+@playerAtTurnToString = @{
+    controller.playerAtTurnToString
+}
 
 @main("HTWG Chess") {
-    <h1 id="Inline-Title">Chess</h1>
-    <div class="game-container">
-        <div class="game">
-            @for(row <- 0 until size) {
-                <div class="row">
-                    <span class="number">
-                        @(size - row)
-                    </span>
-                    @for(col <- 0 until size) {
-                        @{
-                            if (row % 2 == 0) {
-                                if (col % 2 == 0) {
-                                    <span class="square-white">
-                                        {
-                                        if(controller.grid.cell(row, col).isSet) {
-                                            controller.grid.cell(row, col).toString.take(1)
-                                        } else " "
+    <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/chess.css")' />
+    <script src='@routes.Assets.versioned("javascripts/bootstrap.min.js")'></script>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">HTWG Chess</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/about">About <span class="sr-only">(current)</span> </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        New
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/new/PlayerOne/PlayerTwo">New</a>
+                        <a class="dropdown-item" data-toggle="modal" data-target="#exampleModal">New Game with Player Name input</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/undo">Undo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/redo">Redo</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Player Names</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <span>Player 1:</span>
+                        </div>
+                        <div class="col">
+                            <input autocomplete="on" id="player-one-name" name="playerOne" type="text" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <span>Player 2:</span>
+                        </div>
+                        <div class="col">
+                            <input autocomplete="on" id="player-two-name" name="playerTwo" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a href="/new/PlayerOne/PlayerTow" class="btn btn-primary" type="button">Play</a>
+                    <!--<a href="/new/#player-one-name/#player-two-name"class="btn btn-primary" type="button">Play</a>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h1 id="Inline-Title" class="card-header">Chess</h1>
+
+    <div class="page-container">
+        <div class="game-container">
+            <div class="game">
+                @for(row <- 0 until size) {
+                    <div class="c-row">
+                        <span class="number">
+                            @(size - row)
+                        </span>
+                        @for(col <- 0 until size) {
+                            @if(row % 2 == 0) {
+                                @if(col % 2 == 0) {
+                                    <div class="square-white">
+                                        @if(controller.grid.cell(row, col).isSet) {
+                                            <a href="/point/@row/@col">@(controller.grid.cell(row, col).toString.take(1))</a>
+                                        } else {
+                                            <a href="/point/@row/@col">&nbsp;</a>
                                         }
-                                    </span>
+                                    </div>
                                 } else {
-                                    <span class="square-black">
-                                        {
-                                        if(controller.grid.cell(row, col).isSet) {
-                                            controller.grid.cell(row, col).toString.take(1)
-                                        } else " "
+                                    <div class="square-black">
+                                        @if(controller.grid.cell(row, col).isSet) {
+                                            <a href="/point/@row/@col">@(controller.grid.cell(row, col).toString.take(1))</a>
+                                        } else {
+                                            <a href="/point/@row/@col">&nbsp;</a>
                                         }
-                                    </span>
+                                    </div>
                                 }
                             } else {
-                                if (col % 2 == 0) {
-                                    <span class="square-black">
-                                        {
-                                        if(controller.grid.cell(row, col).isSet) {
-                                            controller.grid.cell(row, col).toString.take(1)
-                                        } else " "
+                                @if(col % 2 == 0) {
+                                    <div class="square-black">
+                                        @if(controller.grid.cell(row, col).isSet) {
+                                            <a href="/point/@row/@col">@(controller.grid.cell(row, col).toString.take(1))</a>
+                                        } else {
+                                            <a href="/point/@row/@col">&nbsp;</a>
                                         }
-                                    </span>
+                                    </div>
                                 } else {
-                                    <span class="square-white">
-                                        {
-                                        if(controller.grid.cell(row, col).isSet) {
-                                            controller.grid.cell(row, col).toString.take(1)
-                                        } else " "
+                                    <div class="square-white">
+                                        @if(controller.grid.cell(row, col).isSet) {
+                                            <a href="/point/@row/@col">@(controller.grid.cell(row, col).toString.take(1))</a>
+                                        } else {
+                                            <a href="/point/@row/@col">&nbsp;</a>
                                         }
-                                    </span>
+                                    </div>
                                 }
                             }
                         }
-
-                    }
-                </div>
-                <div class="clear"></div>
-            }
-            <span class="empty"> </span>
-            @for(letter <- 'A' to 'H') {
-                <span class="letter" id="letter-@(letter)">@(letter)</span>
-            }
+                    </div>
+                    <div class="clear"></div>
+                }
+                <span class="empty"> </span>
+                @for(letter <- 'A' to 'H') {
+                    <span class="letter" id="letter-@(letter)">@(letter)</span>
+                }
+            </div>
         </div>
+        @if(controller.gameStatus == NEXT_PLAYER) {
+            <div class="alert alert-primary" role="alert">
+                @controller.playerAtTurnToString @message
+            </div>
+        } else if(controller.gameStatus == CHECK_MATE) {
+            <div class="alert alert-danger" role="alert">
+                @controller.playerNotAtTurnToString @message
+            </div>
+        } else if(controller.gameStatus == MOVE_NOT_VALID)  {
+            <div class="alert alert-danger" role="alert">
+                @controller.playerAtTurn @message
+            </div>
+        } else {
+            <div class="alert alert-warning" role="alert">
+                @controller.playerAtTurnToString @message
+            </div>
+        }
     </div>
 }
-
-@*main("HTWG Chess") {*@
-@*    <h1 id="Title"> Chess </h1>*@
-@*    <div class="gamecontainer">*@
-@*        <div class="game">*@
-@*        @for(row <- 0 until size) {*@
-@*            <div class="row">*@
-@*                @(size - row)*@
-@*                @for(col <- 0 until size) {*@
-@*                    <span class="square">*@
-@*                        @{ if(controller.grid.cell(row, col).isSet) { controller.grid.cell(row, col).toString.take(1) } else " " }*@
-@*                    </span>*@
-@*                }*@
-@*            </div>*@
-@*            <div class="clear"></div>*@
-@*        }*@
-@*            <div class="end-line">A B C D E F G H</div>*@
-@*        </div>*@
-@*    </div>*@
-@*}*@

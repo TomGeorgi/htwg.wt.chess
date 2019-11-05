@@ -1,0 +1,200 @@
+a:link {
+  color: black;
+}
+
+a:any-link {
+  color: black;
+}
+
+@media (min-width: 0px) {
+
+  .page-container {
+    width: 15em;
+    margin: auto;
+    margin-top: 1em;
+    display: block;
+  }
+
+  .game-container {
+    height: 100%;
+    width: 100%;
+    display: inline-flex;
+    color: black;
+    font-family: "Verdana", Geneva, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 19px;
+    margin: 0em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+}
+
+@media (min-width: 480px) {
+
+  .page-container {
+    width: 29em;
+    margin: auto;
+    margin-top: 1em;
+    display: block;
+  }
+
+  .game-container {
+    height: 100%;
+    width: 100%;
+    display: inline-flex;
+    color: black;
+    font-family: "Verdana", Geneva, sans-serif;
+    font-size: 30px;
+    font-weight: bold;
+    line-height: 33px;
+    margin: 0em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+}
+
+@media (min-width: 800px) {
+
+  .page-container {
+    width: 33.5em;
+    margin: auto;
+    margin-top: 1em;
+    display: block;
+  }
+
+  .game-container {
+    height: 100%;
+    width: 100%;
+    display: inline-flex;
+    color: black;
+    font-family: "Verdana", Geneva, sans-serif;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 44px;
+    margin: 0em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+}
+
+@media (min-width: 1000px) {
+
+  .page-container {
+    width: 51em;
+    margin: auto;
+    margin-top: 1em;
+    display: block;
+  }
+
+  .game-container {
+    height: 100%;
+    width: 100%;
+    display: inline-flex;
+    margin: 0em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    font-size: 60px;
+    line-height: 66px;
+    font-family: "Verdana",Geneva, sans-serif;
+    font-weight: bold;
+    color: black;
+  }
+}
+
+#Inline-Title {
+  text-align: center;
+}
+
+.game {
+  border-style: inset;
+  border-width: 0.05em;
+  border-spacing: 0em;
+  border-color: #F6F6FF;
+  padding: 0.05em;
+  background-color: black;
+  margin: auto;
+  width: auto;
+}
+
+.clear {
+  clear: both;
+}
+
+.number {
+  display: inline-block;
+  float: left;
+  border-style: outset;
+  border-width: 0.05em;
+  width: 1.2em;
+  height: 1.2em;
+  text-align: center;
+  background-color: #E0E0FF;
+  border-color: #F6F6FF;
+  margin-right: 0.05em;
+}
+
+.square-white, .square-black {
+  display: inline-block;
+  float: left;
+  border-style: outset;
+  border-width: 0.05em;
+  border-color: #F6F6FF;
+  width: 1.2em;
+  height: 1.2em;
+  text-align: center;
+}
+
+.square-white {
+  background-color: #FECE9D;
+}
+
+.square-black {
+  background-color: #D38B44;
+}
+
+.letter, .empty {
+  display: inline-block;
+  float: left;
+  border-style: outset;
+  border-width: 0.05em;
+  width: 1.2em;
+  height: 1.2em;
+  text-align: center;
+  background-color: #E0E0FF;
+  border-color: #F6F6FF;
+  border-top-color: black;
+  margin-top: 0.05em;
+}
+
+.empty {
+  border-top-color: black;
+  border-left-color: black;
+  margin-right: 0.05em;
+}
+
+h1 {
+  text-align: center;
+  font-family: "Verdana", Geneva, sans-serif;
+}
+
+p {
+  font-family: "Verdana", Geneva, sans-serif;
+  font-size: 20px;
+  text-align: center;
+  white-space: pre-wrap;
+}
+
+#chess-image-text {
+  font-weight: bold;
+  text-align: center;
+}
+
+#chess-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2%;
+  width: 50%;
+  height: 50%;
+}
