@@ -12,7 +12,6 @@
 
 @main("HTWG Chess") {
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/chess.css")' />
-    <script src='@routes.Assets.versioned("javascripts/bootstrap.min.js")'></script>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">HTWG Chess</a>
@@ -91,43 +90,11 @@
                             @(size - row)
                         </span>
                         @for(col <- 0 until size) {
-                            @if(row % 2 == 0) {
-                                @if(col % 2 == 0) {
-                                    <div class="square-white">
-                                        @if(controller.grid.cell(row, col).isSet) {
-                                            <a href="/point/@row/@col">@(controller.grid.cell(row, col).toString.take(1))</a>
-                                        } else {
-                                            <a href="/point/@row/@col">&nbsp;</a>
-                                        }
-                                    </div>
-                                } else {
-                                    <div class="square-black">
-                                        @if(controller.grid.cell(row, col).isSet) {
-                                            <a href="/point/@row/@col">@(controller.grid.cell(row, col).toString.take(1))</a>
-                                        } else {
-                                            <a href="/point/@row/@col">&nbsp;</a>
-                                        }
-                                    </div>
+                            <div id="square-@(row)-@(col)">
+                                @if(!controller.grid.cell(row, col).isSet) {
+                                    <div class="clear"></div>
                                 }
-                            } else {
-                                @if(col % 2 == 0) {
-                                    <div class="square-black">
-                                        @if(controller.grid.cell(row, col).isSet) {
-                                            <a href="/point/@row/@col">@(controller.grid.cell(row, col).toString.take(1))</a>
-                                        } else {
-                                            <a href="/point/@row/@col">&nbsp;</a>
-                                        }
-                                    </div>
-                                } else {
-                                    <div class="square-white">
-                                        @if(controller.grid.cell(row, col).isSet) {
-                                            <a href="/point/@row/@col">@(controller.grid.cell(row, col).toString.take(1))</a>
-                                        } else {
-                                            <a href="/point/@row/@col">&nbsp;</a>
-                                        }
-                                    </div>
-                                }
-                            }
+                            </div>
                         }
                     </div>
                     <div class="clear"></div>

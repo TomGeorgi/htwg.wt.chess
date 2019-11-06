@@ -1,6 +1,6 @@
 name := """Chess in Scala for WebTech"""
 
-version := "1.2"
+version := "1.6"
 
 lazy val root = (project in file (".")).enablePlugins(PlayScala)
 
