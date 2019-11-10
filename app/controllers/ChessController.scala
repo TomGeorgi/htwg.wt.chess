@@ -12,11 +12,6 @@ class ChessController @Inject()(cc: ControllerComponents) extends AbstractContro
   def message = GameStatus.message(gameController.gameStatus)
   def chessAsText =  gameController.gridToString + GameStatus.message(gameController.gameStatus)
 
-  var pointOneRow = -1
-  var pointOneCol = -1
-  var pointTwoRow = -1
-  var pointTwoCol = -1
-
   def about = Action {
     Ok(views.html.index())
   }
@@ -28,12 +23,10 @@ class ChessController @Inject()(cc: ControllerComponents) extends AbstractContro
   }
 
   def turn(row:Int, col:Int, row2:Int,col2:Int) = Action {
+    print(row, col, row2, col2)
     gameController.turn(row, col, row2, col2)
-    Ok(views.html.chess(gameController, message))
-  }
-
-  def turn_intern(row:Int, col:Int, row2:Int,col2:Int) {
-    gameController.turn(row, col, row2, col2)
+    print(chessAsText)
+    Ok(gameController.gridToJson)
   }
 
   def undo = Action {
@@ -48,30 +41,26 @@ class ChessController @Inject()(cc: ControllerComponents) extends AbstractContro
 
   def new_game(playerOne: String, playerTwo: String) = Action {
     gameController.createNewGrid(playerOne, playerTwo)
-    pointOneRow = -1
-    pointOneCol = -1
-    pointTwoRow = -1
-    pointTwoCol = -1
-    Ok(views.html.chess(gameController, message))
+    Ok(gameController.gridToJson)
   }
 
-  def point(row: Int, col: Int) = Action {
-    if (pointOneRow == -1 && pointOneCol == -1) {
-      pointOneRow = row
-      pointOneCol = col
-    } else if (pointTwoRow == -1 && pointTwoCol == -1) {
-      pointTwoRow = row
-      pointTwoCol = col
-    }
+  def playerAtTurn = Action {
+    Ok(gameController.playerAtTurnToString)
+  }
 
-    if (pointOneRow != -1 && pointOneCol != -1 && pointTwoRow != -1 && pointTwoCol != -1) {
-      turn_intern(pointOneRow, pointOneCol, pointTwoRow, pointTwoCol)
-      pointOneRow = -1
-      pointOneCol = -1
-      pointTwoRow = -1
-      pointTwoCol = -1
-    }
+  def playerNotAtTurn = Action {
+    Ok(gameController.playerNotAtTurnToString)
+  }
 
-    Ok(views.html.chess(gameController, message))
+  def getMessage = Action {
+    Ok(message)
+  }
+
+  def getGameStatus = Action {
+    Ok(gameController.gameStatus.toString)
+  }
+
+  def gridToJson = Action {
+    Ok(gameController.gridToJson)
   }
 }

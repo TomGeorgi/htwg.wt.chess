@@ -16,8 +16,15 @@ GET     /redo                       controllers.ChessController.redo
 
 GET     /new/:playerOne/:playerTwo  controllers.ChessController.new_game(playerOne: String, playerTwo: String)
 
-GET     /point/:row/:col            controllers.ChessController.point(row: Int, col: Int)
+GET     /playerAtTurn               controllers.ChessController.playerAtTurn
 
+GET     /playerNotAtTurn            controllers.ChessController.playerNotAtTurn
+
+GET     /message                    controllers.ChessController.getMessage
+
+GET     /gameStatus                 controllers.ChessController.getGameStatus
+
+GET     /json                       controllers.ChessController.gridToJson
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

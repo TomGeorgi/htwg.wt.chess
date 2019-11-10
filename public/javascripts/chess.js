@@ -1,17 +1,33 @@
 let size = 8;
+let selected_row = -1;
+let selected_col = -1;
 
-let gameJson = {
-    playerOne: "PlayerOne",
-    playerTwo: "PlayerTwo",
-    0: {0:"&#9820", 1:"&#9816", 2:"&#9821", 3:"&#9819", 4:"&#9818", 5:"&#9821", 6:"&#9816", 7:"&#9820"},
-    1: {0:"&#9823", 1:"&#9823", 2:"&#9823", 3:"&#9823", 4:"&#9823", 5:"&#9823", 6:"&#9823", 7:"&#9823"},
-    2: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0},
-    3: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0},
-    4: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0},
-    5: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0},
-    6: {0:"&#9817", 1:"&#9817", 2:"&#9817", 3:"&#9817", 4:"&#9817", 5:"&#9817", 6:"&#9817", 7:"&#9817"},
-    7: {0:"&#9814", 1:"&#9822", 2:"&#9815", 3:"&#9813", 4:"&#9812", 5:"&#9815", 6:"&#9822", 7:"&#9814"},
-};
+class Grid {
+
+    constructor() {
+        this.size = size;
+        this.cells = [[]];
+    }
+
+    fill(data) {
+        let rw = [];
+        for (let cell = 0; cell < this.size * this.size; cell++) {
+            let row = data[cell].row;
+            let col = data[cell].col;
+            rw[col] = [data[cell].cell];
+            if (col === 7) {
+                this.cells[row] = rw;
+                rw = [];
+            }
+        }
+    }
+}
+
+let grid;
+
+/*function handleCardOnDrag(event) {
+    event.dataTransfer.setData("text", event.target.id);
+}*/
 
 function setupBoard() {
     for(let row = 0; row < size; row++) {
@@ -27,61 +43,14 @@ function setupBoard() {
     }
 }
 
-class Grid {
-
-    constructor(playerOne, playerTwo) {
-        this.playerOne = playerOne;
-        this.playerTwo = playerTwo;
-        this.cells = [[]];
-        this.size = 8
-    }
-
-    fill(json) {
-        for (let row = 0; row < this.size; row++) {
-            let rw = [];
-            for (let col = 0; col < this.size; col++) {
-                rw[col] = (json[row][col]);
-            }
-            this.cells[row] = rw;
-        }
-    }
-}
-
-
-let grid = new Grid(gameJson.playerOne, gameJson.playerTwo);
-grid.fill(gameJson);
-
-function fillGrid(grid) {
+function updateBoard() {
     for (let row = 0; row < grid.size; row++) {
         for (let col = 0; col < grid.size; col++) {
-            if (grid.cells[row][col] !== 0) {
-                //console.log(grid.cells[row][col].toString());
-                $("#square-" + row + "-" + col).html(grid.cells[row][col].toString());
-            }
+            let html = "<div class='cell'" + /* draggable='true'*/ ">"+ grid.cells[row][col].toString();
+            $("#square-" + row + "-" + col).html(grid.cells[row][col].toString());
         }
     }
 }
-
-function registerClickListener() {
-    for (let row = 0; row < size; row++) {
-        for (let col = 0; col < size; col++) {
-            $("#square-" + row.toString() + "-" + col.toString()).click(function () {
-                console.log("Square" + row.toString() + "-" + col.toString() + "clicked")
-            });
-            /*$("#square-" + row.toString() + "-" + col.toString()).mousemove(function ( event ) {
-                console.log("works");
-            });
-            $(document.getElementById("#square-" + row.toString() + "-" + col.toString())).onmousemove = function () {
-                console.log("Square" + row.toString() + "-" + col.toString() + "moved")
-            };
-            $(document.getElementById("#square-" + row.toString() + "-" + col.toString())).onmouseleave = function () {
-                console.log("Square" + row.toString() + "-" + col.toString() + "leaved")
-            };*/
-        }
-    }
-}
-
-let oldColor = "";
 
 function registerMouseMoveEvent() {
     for (let row = 0; row < size; row++) {
@@ -89,26 +58,215 @@ function registerMouseMoveEvent() {
             let id = "square-" + row.toString() + "-" + col.toString();
 
             $(document.getElementById(id)).mouseenter(function() {
-                if (grid.cells[row][col] !== 0) {
-                    let li = document.getElementById(id);
-                    oldColor = li.style.backgroundColor.toString();
-                    li.style.backgroundColor = "green";
+                if (this.innerText !== "") {
+                    $(this).addClass('square-hover');
                 }
             });
-            $(document.getElementById(id)).mouseleave(function() {
-                let li = document.getElementById(id);
-                li.style.backgroundColor = oldColor;
-                oldColor = "";
+
+            $(document.getElementById(id)).mouseleave(function () {
+                if ($(this).hasClass('square-hover')) {
+                    $(this).removeClass('square-hover');
+                }
+            })
+        }
+    }
+}
+
+function registerClickListener() {
+    for (let row = 0; row < grid.size; row++) {
+        for (let col = 0; col < grid.size; col++) {
+            let id = "square-" + row.toString() + "-" + col.toString();
+
+            $(document.getElementById(id)).click(function () {
+                if (selected_row === -1 && selected_col === -1) {
+                    if (this.innerText !== "") {
+                        $(this).addClass('selected');
+                        selected_row = row;
+                        selected_col = col;
+                    }
+                } else {
+                    if (selected_row !== row || selected_col !== col) {
+                        doTurn(selected_row, selected_col, row, col);
+                        updateGameStatus();
+                    }
+                    $("#square-" + selected_row + "-" + selected_col).removeClass('selected');
+                    selected_col = -1;
+                    selected_row = -1;
+                }
+
             });
         }
     }
 }
 
+function updateGameStatus() {
+    let gameStatus = getGameStatus();
+    let playerAtTurn = getPlayerAtTurn();
+    let playerNotAtTurn = getPlayerNotAtTurn();
+    let message = getMessage();
+    let id = document.getElementById('message-box');
+
+    id.className = "";
+    if (gameStatus === "NEXT_PLAYER") {
+        $(id).addClass("alert alert-primary");
+        id.innerText = playerAtTurn.toString() + message.toString();
+    } else if(gameStatus === "CHECK_MATE") {
+        $(id).addClass("alert alert-danger");
+        id.innerText = playerNotAtTurn.toString() + message.toString();
+    } else if(gameStatus === "MOVE_NOT_VALID") {
+        $(id).addClass("alert alert-danger");
+        id.innerText = playerAtTurn.toString() + message.toString();
+    } else {
+        $(id).addClass("alert alert-warning");
+        id.innerText = playerAtTurn.replace(/(\r\n|\n|\r)/gm, "").toString() + ", " +
+            message.replace(/(\r\n|\n|\r)/gm, "").toString();
+    }
+}
+
+function loadJson() {
+    $.ajax({
+        method: "GET",
+        url: "/json",
+        dataType: "json",
+        async: false,
+
+        success: function(result) {
+            grid.fill(result.grid.cells);
+        }
+    });
+}
+
+function doTurn(row, col, row_two, col_two) {
+    $.ajax({
+        method: "GET",
+        url: "/turn/" + row.toString() + "/" + col.toString() + "/" + row_two.toString() + "/" + col_two.toString(),
+        dataType: "json",
+        async: false,
+
+        success: function(data) {
+            grid.fill(data.grid.cells);
+            updateBoard();
+        }
+    });
+}
+
+function getPlayerAtTurn() {
+    let playerAtTurn = "";
+    $.ajax({
+        method: "GET",
+        url: "/playerAtTurn",
+        dataType: "html",
+        async: false,
+
+        success: function(data) {
+            playerAtTurn = data;
+        }
+    });
+    return playerAtTurn;
+}
+
+function getPlayerNotAtTurn() {
+    let playerNotAtTurn = "";
+    $.ajax({
+        method: "GET",
+        url: "/playerNotAtTurn",
+        dataType: "html",
+        async: false,
+
+        success: function(data) {
+            playerNotAtTurn = data;
+        }
+    });
+    return playerNotAtTurn;
+}
+
+function getGameStatus() {
+    let gameStatus = "";
+    $.ajax({
+        method: "GET",
+        url: "/gameStatus",
+        dataType: "html",
+        async: false,
+
+        success: function(data) {
+            gameStatus = data.toString();
+        }
+    });
+    return gameStatus;
+}
+
+function getMessage() {
+    let message = "";
+    $.ajax({
+        method: "GET",
+        url: "/message",
+        dataType: "html",
+        async: false,
+
+        success: function(data) {
+            message = data;
+        }
+    });
+
+    return message;
+}
+
+function newGame() {
+    let playerOne = "playerOne";
+    let playerTwo = "playerTwo";
+
+    $.ajax({
+        method: "GET",
+        url: "/new/" + playerOne.toString() + "/" + playerTwo.toString(),
+        dataType: "json",
+        async: false,
+
+        success: function(result) {
+            grid.fill(result.grid.cells);
+            updateBoard();
+            updateGameStatus();
+        }
+    });
+
+    $(document.getElementById('navbarDropdown')).removeClass('open');
+}
+
+function newGameWithNames() {
+    let playerOne = document.getElementById("player-one-name").value;
+    let playerTwo = document.getElementById("player-two-name").value;
+    let errorBox = document.getElementById("error-box");
+    if (playerOne === "" || playerTwo === "") {
+        $(errorBox).addClass("alert alert-danger");
+        errorBox.innerText = "Please fill all Name Boxes";
+        $(errorBox).role = "alert";
+    } else {
+        $.ajax({
+            method: "GET",
+            url: "/new/" + playerOne.toString() + "/" + playerTwo.toString(),
+            dataType: "json",
+            async: false,
+
+            success: function(result) {
+                grid.fill(result.grid.cells);
+                updateBoard();
+                updateGameStatus();
+                $(document.getElementById("newGameWithNames")).modal('hide');
+
+            }
+        });
+        if ($(errorBox).hasClass("alert alert-danger")) {
+            $(errorBox).removeClass("alert alert-danger");
+            errorBox.innerText = "";
+            $(errorBox).role = "";
+        }
+    }
+}
+
 $( document ).ready(function () {
-    console.log( "This is a test! ");
     setupBoard();
-    fillGrid( grid );
+    grid = new Grid();
+    loadJson();
+    updateBoard();
+    registerClickListener();
     registerMouseMoveEvent();
-    //console.log(grid.cells);
-    //registerClickListener();
 });

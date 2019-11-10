@@ -29,8 +29,8 @@
                         New
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/new/PlayerOne/PlayerTwo">New</a>
-                        <a class="dropdown-item" data-toggle="modal" data-target="#exampleModal">New Game with Player Name input</a>
+                        <a class="dropdown-item" onclick="newGame(event)">New</a>
+                        <a class="dropdown-item" data-toggle="modal" data-target="#newGameWithNames">New Game with Player Name input</a>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -43,7 +43,7 @@
         </div>
     </nav>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="newGameWithNames" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -71,8 +71,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <div id="error-box"></div>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <a href="/new/PlayerOne/PlayerTow" class="btn btn-primary" type="button">Play</a>
+                    <a onclick="newGameWithNames(event)" id="play-button" class="btn btn-primary" type="button">Play</a>
                     <!--<a href="/new/#player-one-name/#player-two-name"class="btn btn-primary" type="button">Play</a>-->
                 </div>
             </div>
@@ -90,7 +91,7 @@
                             @(size - row)
                         </span>
                         @for(col <- 0 until size) {
-                            <div id="square-@(row)-@(col)">
+                            <div id="square-@(row)-@(col)" class="noselect" ondragstart="handleFigureOnDrag(event)">
                                 @if(!controller.grid.cell(row, col).isSet) {
                                     <div class="clear"></div>
                                 }
@@ -106,20 +107,20 @@
             </div>
         </div>
         @if(controller.gameStatus == NEXT_PLAYER) {
-            <div class="alert alert-primary" role="alert">
+            <div id="message-box" class="alert alert-primary" role="alert">
                 @controller.playerAtTurnToString @message
             </div>
         } else if(controller.gameStatus == CHECK_MATE) {
-            <div class="alert alert-danger" role="alert">
+            <div id="message-box" class="alert alert-danger" role="alert">
                 @controller.playerNotAtTurnToString @message
             </div>
         } else if(controller.gameStatus == MOVE_NOT_VALID)  {
-            <div class="alert alert-danger" role="alert">
+            <div id="message-box" class="alert alert-danger" role="alert">
                 @controller.playerAtTurn @message
             </div>
         } else {
-            <div class="alert alert-warning" role="alert">
-                @controller.playerAtTurnToString @message
+            <div id="message-box" class="alert alert-warning" role="alert">
+                @controller.playerAtTurnToString, @message
             </div>
         }
     </div>
