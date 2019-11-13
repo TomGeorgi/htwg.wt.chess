@@ -1,6 +1,7 @@
 let size = 8;
 let selected_row = -1;
 let selected_col = -1;
+let elements = [];
 
 class Grid {
 
@@ -81,10 +82,23 @@ function registerClickListener() {
                 if (selected_row === -1 && selected_col === -1) {
                     if (this.innerText !== "") {
                         $(this).addClass('selected');
+                        let pMoves = getPossibleMove(row, col);
+                        for (let move = 0; move < pMoves.cell.moves.length; move++) {
+                            let r = pMoves.cell.moves[move][0];
+                            let c = pMoves.cell.moves[move][1];
+
+                            let highlightedElement = document.getElementById("square-" + r.toString() + "-" + c.toString());
+
+                            elements.push(highlightedElement);
+                            $(highlightedElement).addClass('selected');
+                        }
                         selected_row = row;
                         selected_col = col;
                     }
                 } else {
+                    for(let i = 0; i < elements.length; i++) {
+                        $(elements[i]).removeClass('selected');
+                    }
                     if (selected_row !== row || selected_col !== col) {
                         doTurn(selected_row, selected_col, row, col);
                         updateGameStatus();
@@ -209,6 +223,22 @@ function getMessage() {
     });
 
     return message;
+}
+
+function getPossibleMove(row, col) {
+    let msg = null;
+    $.ajax({
+        method: "GET",
+        url: "/possibleMove/" + row.toString() + "/" + col.toString(),
+        dataType: "json",
+        async: false,
+
+        success: function(data) {
+            msg = data;
+        }
+    });
+
+    return msg;
 }
 
 function newGame() {

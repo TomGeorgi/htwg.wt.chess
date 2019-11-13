@@ -24,6 +24,8 @@ GET     /message                    controllers.ChessController.getMessage
 
 GET     /gameStatus                 controllers.ChessController.getGameStatus
 
+GET     /possibleMove/:row/:col     controllers.ChessController.getPossibleMove(row: Int, col: Int)
+
 GET     /json                       controllers.ChessController.gridToJson
 
 # Map static resources from the /public folder to the /assets URL path

@@ -60,6 +60,10 @@ class ChessController @Inject()(cc: ControllerComponents) extends AbstractContro
     Ok(gameController.gameStatus.toString)
   }
 
+  def getPossibleMove(row: Int, col: Int) = Action {
+    Ok(gameController.getPossibleMove(row, col))
+  }
+
   def gridToJson = Action {
     Ok(gameController.gridToJson)
   }
