@@ -146,6 +146,7 @@ function loadJson() {
 
         success: function(result) {
             grid.fill(result.grid.cells);
+            updateBoard();
         }
     });
 }
@@ -292,10 +293,38 @@ function newGameWithNames() {
     }
 }
 
+function connectWebSocket() {
+    var websocket = new WebSocket("ws://localhost:9000/websocket")
+    websocket.setTimeout = 30;
+
+    websocket.onopen = function(event) {
+        console.log("Connected to Websocket");
+    };
+
+    websocket.onclose = function() {
+        console.log("Connection with Websocket closed!");
+    };
+
+    websocket.onerror = function(error) {
+        console.log("Error in Websocket Occurred: " + error);
+    };
+
+    websocket.onmessage = function (e) {
+        if (typeof e.data === "string") {
+            console.log("here");
+            let json = JSON.parse(e.data);
+            let cells = json.grid.cells;
+            grid.fill(cells);
+
+        }
+    }
+}
+
 $( document ).ready(function () {
     setupBoard();
     grid = new Grid();
     loadJson();
+    connectWebSocket();
     updateBoard();
     registerClickListener();
     registerMouseMoveEvent();

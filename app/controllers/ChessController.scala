@@ -4,10 +4,16 @@ import javax.inject._
 
 import play.api.mvc._
 import de.htwg.se.Chess.Chess
-import de.htwg.se.Chess.controller.controllerComponent.GameStatus
+import de.htwg.se.Chess.controller.controllerComponent.{GameStatus, Played}
+import play.api.libs.streams.ActorFlow
+import akka.actor.ActorSystem
+import akka.stream.Materializer
+import akka.actor._
+
+import scala.swing.Reactor
 
 @Singleton
-class ChessController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class ChessController @Inject()(cc: ControllerComponents) (implicit system: ActorSystem, mat: Materializer) extends AbstractController(cc) {
   val gameController = Chess.controller
   def message = GameStatus.message(gameController.gameStatus)
   def chessAsText =  gameController.gridToString + GameStatus.message(gameController.gameStatus)
@@ -66,5 +72,37 @@ class ChessController @Inject()(cc: ControllerComponents) extends AbstractContro
 
   def gridToJson = Action {
     Ok(gameController.gridToJson)
+  }
+
+  def socket = WebSocket.accept[String, String] { request =>
+    ActorFlow.actorRef { out =>
+      println("Connect received")
+      ChessWebSocketActorFactory.create(out)
+    }
+  }
+
+  object ChessWebSocketActorFactory {
+    def create(out: ActorRef) = {
+      Props(new ChessWebSocketActor(out))
+    }
+  }
+
+  class ChessWebSocketActor(out: ActorRef) extends Actor with Reactor {
+    listenTo(gameController)
+
+    def receive = {
+      case msg: String =>
+        out ! (gameController.gridToJson.toString())
+        println("Sent Json to Client " + msg)
+    }
+
+    reactions += {
+      case event: Played  => sendJsonToClient
+    }
+
+    def sendJsonToClient = {
+      println("Received event from Controller")
+      out ! (gameController.gridToJson.toString())
+    }
   }
 }
