@@ -3,6 +3,8 @@ let selected_row = -1;
 let selected_col = -1;
 let elements = [];
 
+let player_color = undefined;
+
 class Grid {
 
     constructor() {
@@ -31,10 +33,10 @@ let grid;
 }*/
 
 function setupBoard() {
-    for(let row = 0; row < size; row++) {
-        for(let col = 0; col < size; col++) {
+    for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
             let square = $('#square-' + row + "-" + col);
-            if((row + col) % 2 !== 0) {
+            if ((row + col) % 2 !== 0) {
                 square.addClass('square-white');
             } else {
                 square.addClass('square-black');
@@ -44,10 +46,10 @@ function setupBoard() {
     }
 }
 
-function updateBoard() {
+function updateBoard(grid) {
     for (let row = 0; row < grid.size; row++) {
         for (let col = 0; col < grid.size; col++) {
-            let html = "<div class='cell'" + /* draggable='true'*/ ">"+ grid.cells[row][col].toString();
+            let html = "<div class='cell'" + /* draggable='true'*/ ">" + grid.cells[row][col].toString();
             $("#square-" + row + "-" + col).html(grid.cells[row][col].toString());
         }
     }
@@ -58,7 +60,7 @@ function registerMouseMoveEvent() {
         for (let col = 0; col < size; col++) {
             let id = "square-" + row.toString() + "-" + col.toString();
 
-            $(document.getElementById(id)).mouseenter(function() {
+            $(document.getElementById(id)).mouseenter(function () {
                 if (this.innerText !== "") {
                     $(this).addClass('square-hover');
                 }
@@ -96,12 +98,11 @@ function registerClickListener() {
                         selected_col = col;
                     }
                 } else {
-                    for(let i = 0; i < elements.length; i++) {
+                    for (let i = 0; i < elements.length; i++) {
                         $(elements[i]).removeClass('selected');
                     }
                     if (selected_row !== row || selected_col !== col) {
                         doTurn(selected_row, selected_col, row, col);
-                        updateGameStatus();
                     }
                     $("#square-" + selected_row + "-" + selected_col).removeClass('selected');
                     selected_col = -1;
@@ -124,10 +125,10 @@ function updateGameStatus() {
     if (gameStatus === "NEXT_PLAYER") {
         $(id).addClass("alert alert-primary");
         id.innerText = playerAtTurn.toString() + message.toString();
-    } else if(gameStatus === "CHECK_MATE") {
+    } else if (gameStatus === "CHECK_MATE") {
         $(id).addClass("alert alert-danger");
         id.innerText = playerNotAtTurn.toString() + message.toString();
-    } else if(gameStatus === "MOVE_NOT_VALID") {
+    } else if (gameStatus === "MOVE_NOT_VALID") {
         $(id).addClass("alert alert-danger");
         id.innerText = playerAtTurn.toString() + message.toString();
     } else {
@@ -144,14 +145,22 @@ function loadJson() {
         dataType: "json",
         async: false,
 
-        success: function(result) {
+        success: function (result) {
             grid.fill(result.grid.cells);
-            updateBoard();
+            updateBoard(grid);
+            updateGameStatus();
         }
     });
 }
 
 function doTurn(row, col, row_two, col_two) {
+    /*$.get("/turn/" + row.toString() + "/" + col.toString() +
+        "/" + row_two.toString() + "/" + col_two.toString(),
+        function (data) {
+            console.log("Do Turn on Server");
+        }
+    );*/
+    //console.log(player_color.toString())
     $.ajax({
         method: "GET",
         url: "/turn/" + row.toString() + "/" + col.toString() + "/" + row_two.toString() + "/" + col_two.toString(),
@@ -160,7 +169,7 @@ function doTurn(row, col, row_two, col_two) {
 
         success: function(data) {
             grid.fill(data.grid.cells);
-            updateBoard();
+            updateBoard(grid);
         }
     });
 }
@@ -173,7 +182,7 @@ function getPlayerAtTurn() {
         dataType: "html",
         async: false,
 
-        success: function(data) {
+        success: function (data) {
             playerAtTurn = data;
         }
     });
@@ -188,7 +197,7 @@ function getPlayerNotAtTurn() {
         dataType: "html",
         async: false,
 
-        success: function(data) {
+        success: function (data) {
             playerNotAtTurn = data;
         }
     });
@@ -203,7 +212,7 @@ function getGameStatus() {
         dataType: "html",
         async: false,
 
-        success: function(data) {
+        success: function (data) {
             gameStatus = data.toString();
         }
     });
@@ -218,7 +227,7 @@ function getMessage() {
         dataType: "html",
         async: false,
 
-        success: function(data) {
+        success: function (data) {
             message = data;
         }
     });
@@ -234,7 +243,7 @@ function getPossibleMove(row, col) {
         dataType: "json",
         async: false,
 
-        success: function(data) {
+        success: function (data) {
             msg = data;
         }
     });
@@ -252,9 +261,9 @@ function newGame() {
         dataType: "json",
         async: false,
 
-        success: function(result) {
+        success: function (result) {
             grid.fill(result.grid.cells);
-            updateBoard();
+            updateBoard(grid);
             updateGameStatus();
         }
     });
@@ -277,9 +286,9 @@ function newGameWithNames() {
             dataType: "json",
             async: false,
 
-            success: function(result) {
+            success: function (result) {
                 grid.fill(result.grid.cells);
-                updateBoard();
+                updateBoard(grid);
                 updateGameStatus();
                 $(document.getElementById("newGameWithNames")).modal('hide');
 
@@ -294,38 +303,105 @@ function newGameWithNames() {
 }
 
 function connectWebSocket() {
-    var websocket = new WebSocket("ws://localhost:9000/websocket")
-    websocket.setTimeout = 30;
+    var websocket = new WebSocket("ws://localhost:9000/websocket");
+    websocket.setTimeout = -1;
 
-    websocket.onopen = function(event) {
+    websocket.onopen = function (event) {
         console.log("Connected to Websocket");
+        websocket.send("connect");
     };
 
-    websocket.onclose = function() {
+    websocket.onclose = function () {
         console.log("Connection with Websocket closed!");
+        connectWebSocket();
     };
 
-    websocket.onerror = function(error) {
+    websocket.onerror = function (error) {
         console.log("Error in Websocket Occurred: " + error);
+        connectWebSocket();
     };
 
     websocket.onmessage = function (e) {
         if (typeof e.data === "string") {
-            console.log("here");
             let json = JSON.parse(e.data);
             let cells = json.grid.cells;
             grid.fill(cells);
-
+            updateBoard(grid);
+            updateGameStatus();
         }
     }
 }
 
-$( document ).ready(function () {
+$(document).ready(function () {
     setupBoard();
     grid = new Grid();
     loadJson();
     connectWebSocket();
-    updateBoard();
     registerClickListener();
     registerMouseMoveEvent();
 });
+
+/*function select(player) {
+    if (player === "player_one") {
+        player = "white";
+    } else if (player === "player_two") {
+        player = "black";
+    }
+
+    console.log("here");
+
+    $.ajax({
+        method: "GET",
+        url: "/select/" + player,
+        dataType: "html",
+        async: false,
+
+        success: function (result) {
+            console.log(result);
+            player_color = result;
+            $('#selectPlayerAndColor').modal('hide');
+            connectWebSocket();
+        }
+    });
+}*/
+
+/*$(function () {
+    setupBoard();
+    grid = new Grid();
+    loadJson();
+    updateBoard();
+    registerClickListener();
+    registerMouseMoveEvent();
+
+    $.ajax({
+        method: "GET",
+        url: "/check_connections",
+        dataType: "html",
+        async: false,
+
+        success: function (data) {
+            if (data === "fully_lobby") {
+                alert("Lobby is full!");
+                $.get("/about");
+            } else if (data === "empty_lobby") {
+                console.log("select a color....");
+                $('#selectPlayerAndColor').modal('show');
+            } else if (data === "connectable_lobby") {
+                console.log("im here");
+                $.ajax({
+                    method: "GET",
+                    url: "/join",
+                    dataType: "html",
+                    async: false,
+
+                    success: function (data) {
+                        console.log(data);
+                        player_color = data;
+                        console.log("connect");
+                        connectWebSocket();
+                    }
+                })
+            }
+        }
+    });
+});*/
