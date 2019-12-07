@@ -6,6 +6,8 @@
 
 GET     /                           controllers.ChessController.chess
 
+GET     /chessPolymer               controllers.ChessController.chessPolymer
+
 GET     /about                      controllers.ChessController.about
 
 GET     /turn/:row/:col/:row2/:col2 controllers.ChessController.turn(row: Int, col: Int, row2: Int, col2: Int)
@@ -29,14 +31,6 @@ GET     /possibleMove/:row/:col     controllers.ChessController.getPossibleMove(
 GET     /json                       controllers.ChessController.gridToJson
 
 GET     /websocket                  controllers.ChessController.socket
-
-GET     /check_cookie               controllers.ChessController.check_cookie
-
-# GET     /check_connections          controllers.ChessController.check_connections
-
-# GET     /select/:color              controllers.ChessController.select(color: String)
-
-# GET     /join                       controllers.ChessController.join
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

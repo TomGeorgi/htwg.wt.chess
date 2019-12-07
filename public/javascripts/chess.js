@@ -304,7 +304,6 @@ function newGameWithNames() {
 
 function connectWebSocket() {
     var websocket = new WebSocket("ws://localhost:9000/websocket");
-    websocket.setTimeout = -1;
 
     websocket.onopen = function (event) {
         console.log("Connected to Websocket");
@@ -313,12 +312,11 @@ function connectWebSocket() {
 
     websocket.onclose = function () {
         console.log("Connection with Websocket closed!");
-        connectWebSocket();
+        websocket.setTimeout(connectWebSocket, 1000);
     };
 
     websocket.onerror = function (error) {
         console.log("Error in Websocket Occurred: " + error);
-        connectWebSocket();
     };
 
     websocket.onmessage = function (e) {
@@ -340,68 +338,3 @@ $(document).ready(function () {
     registerClickListener();
     registerMouseMoveEvent();
 });
-
-/*function select(player) {
-    if (player === "player_one") {
-        player = "white";
-    } else if (player === "player_two") {
-        player = "black";
-    }
-
-    console.log("here");
-
-    $.ajax({
-        method: "GET",
-        url: "/select/" + player,
-        dataType: "html",
-        async: false,
-
-        success: function (result) {
-            console.log(result);
-            player_color = result;
-            $('#selectPlayerAndColor').modal('hide');
-            connectWebSocket();
-        }
-    });
-}*/
-
-/*$(function () {
-    setupBoard();
-    grid = new Grid();
-    loadJson();
-    updateBoard();
-    registerClickListener();
-    registerMouseMoveEvent();
-
-    $.ajax({
-        method: "GET",
-        url: "/check_connections",
-        dataType: "html",
-        async: false,
-
-        success: function (data) {
-            if (data === "fully_lobby") {
-                alert("Lobby is full!");
-                $.get("/about");
-            } else if (data === "empty_lobby") {
-                console.log("select a color....");
-                $('#selectPlayerAndColor').modal('show');
-            } else if (data === "connectable_lobby") {
-                console.log("im here");
-                $.ajax({
-                    method: "GET",
-                    url: "/join",
-                    dataType: "html",
-                    async: false,
-
-                    success: function (data) {
-                        console.log(data);
-                        player_color = data;
-                        console.log("connect");
-                        connectWebSocket();
-                    }
-                })
-            }
-        }
-    });
-});*/
