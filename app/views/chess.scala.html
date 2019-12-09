@@ -12,6 +12,7 @@
 
 @main("HTWG Chess") {
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/chess.css")' />
+    <script src="@routes.Assets.versioned("javascripts/chess.js")" ></script>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">HTWG Chess</a>
@@ -140,7 +141,7 @@
             </div>
         } else {
             <div id="message-box" class="alert alert-warning" role="alert">
-                @controller.playerAtTurnToString, @message
+                @controller.playerAtTurnToString @message
             </div>
         }
     </div>

@@ -1,21 +1,100 @@
 @()
+@main("HTWG Chess") {
+    <script type="module" src="assets/src/chess-app/chess-app.js"></script>
+    <script type="module" src="assets/src/chess-app/letter-element.js"></script>
 
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">HTWG Chess</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <title>sudoku</title>
-        <meta name="description" content="Chess for HTWG lecture Web-Technologies">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/about">About <span class="sr-only">(current)</span> </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        New
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" onclick="newGame(event)">New</a>
+                        <a class="dropdown-item" data-toggle="modal" data-target="#newGameWithNames">
+                            New Game with Player Name input</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="undo()">Undo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="redo()">Redo</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-        <link rel="manifest" href="@routes.Assets.versioned("manifest.json")">
+    <div class="modal fade" id="newGameWithNames" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Player Names</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <span>Player 1:</span>
+                        </div>
+                        <div class="col">
+                            <input autocomplete="on" id="player-one-name" name="playerOne" type="text" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <span>Player 2:</span>
+                        </div>
+                        <div class="col">
+                            <input autocomplete="on" id="player-two-name" name="playerTwo" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div id="error-box"></div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a onclick="newGameWithNames(event)" id="play-button" class="btn btn-primary" type="button">Play</a>
+                        <!--<a href="/new/#player-one-name/#player-two-name"class="btn btn-primary" type="button">Play</a>-->
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <script src="@routes.Assets.versioned("bower_components/webcomponentsjs/webcomponents-loader.js")"></script>
+    <div class="modal fade" id="selectPlayerAndColor" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Select Player</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <a onclick="select('player_one')" id="play-button" class="btn btn-primary" type="button">
+                                Player One</a>
+                        </div>
+                        <div class="col">
+                            <a onclick="select('player_two')" id="play-button" class="btn btn-primary" type="button">
+                                Player Two</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <link rel="import" href="@routes.Assets.versioned("/src/chess-app/chess-app.html")">
-    </head>
-    <body>
-        <chess-app></chess-app>
-    </body>
-</html>
+    <h1 id="Inline-Title" class="card-header">Chess</h1>
+    <chess-app></chess-app>
+    </div>
+
+}

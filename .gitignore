@@ -5,4 +5,4 @@ target
 /.classpath
 /.project
 /.settings
-/RUNNING_PID
+/public/bower_components/

@@ -311,8 +311,8 @@ function connectWebSocket() {
     };
 
     websocket.onclose = function () {
+        // websocket.setTimeout(connectWebSocket, 1000);
         console.log("Connection with Websocket closed!");
-        websocket.setTimeout(connectWebSocket, 1000);
     };
 
     websocket.onerror = function (error) {
