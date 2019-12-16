@@ -32,20 +32,6 @@ let grid;
     event.dataTransfer.setData("text", event.target.id);
 }*/
 
-function setupBoard() {
-    for (let row = 0; row < size; row++) {
-        for (let col = 0; col < size; col++) {
-            let square = $('#square-' + row + "-" + col);
-            if ((row + col) % 2 !== 0) {
-                square.addClass('square-white');
-            } else {
-                square.addClass('square-black');
-            }
-            //
-        }
-    }
-}
-
 function updateBoard(grid) {
     for (let row = 0; row < grid.size; row++) {
         for (let col = 0; col < grid.size; col++) {
@@ -313,12 +299,12 @@ function connectWebSocket() {
 
     websocket.onclose = function () {
         console.log("Connection with Websocket closed!");
-        connectWebSocket();
+        //connectWebSocket();
     };
 
     websocket.onerror = function (error) {
         console.log("Error in Websocket Occurred: " + error);
-        connectWebSocket();
+        //connectWebSocket();
     };
 
     websocket.onmessage = function (e) {
@@ -333,75 +319,15 @@ function connectWebSocket() {
 }
 
 $(document).ready(function () {
-    setupBoard();
+    var app = new Vue({
+        el: '#chess-app',
+        render: function(html) {
+            return html(ChessApp.default, {});
+        }
+    })
     grid = new Grid();
     loadJson();
     connectWebSocket();
     registerClickListener();
     registerMouseMoveEvent();
 });
-
-/*function select(player) {
-    if (player === "player_one") {
-        player = "white";
-    } else if (player === "player_two") {
-        player = "black";
-    }
-
-    console.log("here");
-
-    $.ajax({
-        method: "GET",
-        url: "/select/" + player,
-        dataType: "html",
-        async: false,
-
-        success: function (result) {
-            console.log(result);
-            player_color = result;
-            $('#selectPlayerAndColor').modal('hide');
-            connectWebSocket();
-        }
-    });
-}*/
-
-/*$(function () {
-    setupBoard();
-    grid = new Grid();
-    loadJson();
-    updateBoard();
-    registerClickListener();
-    registerMouseMoveEvent();
-
-    $.ajax({
-        method: "GET",
-        url: "/check_connections",
-        dataType: "html",
-        async: false,
-
-        success: function (data) {
-            if (data === "fully_lobby") {
-                alert("Lobby is full!");
-                $.get("/about");
-            } else if (data === "empty_lobby") {
-                console.log("select a color....");
-                $('#selectPlayerAndColor').modal('show');
-            } else if (data === "connectable_lobby") {
-                console.log("im here");
-                $.ajax({
-                    method: "GET",
-                    url: "/join",
-                    dataType: "html",
-                    async: false,
-
-                    success: function (data) {
-                        console.log(data);
-                        player_color = data;
-                        console.log("connect");
-                        connectWebSocket();
-                    }
-                })
-            }
-        }
-    });
-});*/

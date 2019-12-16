@@ -30,13 +30,9 @@ GET     /json                       controllers.ChessController.gridToJson
 
 GET     /websocket                  controllers.ChessController.socket
 
-GET     /check_cookie               controllers.ChessController.check_cookie
-
-# GET     /check_connections          controllers.ChessController.check_connections
-
-# GET     /select/:color              controllers.ChessController.select(color: String)
-
-# GET     /join                       controllers.ChessController.join
+GET     /vueChess                   controllers.ChessController.vueChess
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+# GET     /node_modules/*file         controllers.Assets.at(path="/public/node_modules", file)

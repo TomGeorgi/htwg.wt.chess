@@ -1,7 +1,5 @@
 package controllers
 
-import java.util.UUID
-
 import javax.inject._
 import play.api.mvc._
 import de.htwg.se.Chess.Chess
@@ -11,16 +9,16 @@ import de.htwg.se.Chess.model.playerComponent.PlayerInterface
 import de.htwg.se.Chess.model.playerComponent.playerBaseImpl.Player
 import play.api.libs.json.{JsString, JsValue, Json}
 import play.api.libs.streams.ActorFlow
-
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.actor._
 
 import scala.collection.mutable
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.swing.Reactor
 
 @Singleton
-class ChessController @Inject()(cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer) extends AbstractController(cc) {
+class ChessController @Inject()(cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer, ec: ExecutionContext) extends AbstractController(cc) {
   val gameController = Chess.controller
 
   def message = GameStatus.message(gameController.gameStatus)
@@ -30,43 +28,6 @@ class ChessController @Inject()(cc: ControllerComponents)(implicit system: Actor
   var cookieToUid: mutable.Map[String, String] = mutable.Map()
   var uidToPlayer: mutable.Map[String, String] = mutable.Map()
 
-  //var connections = 0
-  //var selectable_players: (PlayerInterface, PlayerInterface) = gameController.player
-  //var selected_players: mutable.Map[String, PlayerInterface] = mutable.Map()
-
-  def check_cookie: Action[AnyContent] = Action {
-    implicit request => {
-      val cookie = request.cookies.get("PLAY_SESSION") match {
-        case Some(cookie) => cookie.value
-        case None => "ERROR"
-      }
-
-      println("request: " +  request)
-      println(cookie)
-      println(cookieToUid.size)
-
-
-      if (cookieToUid.contains(cookie)) {
-        Ok("cookie_already_exist")
-      } else {
-        println("New Cookie")
-        Ok("new_cookie:")
-      }
-    }
-  }
-
-  /*def check_connections = Action {
-    implicit request => {
-      if (connections >= 2) {
-        Ok("full_lobby")
-      } else if (connections == 0) {
-        Ok("empty_lobby")
-      } else {
-        Ok("connectable_lobby")
-      }
-    }
-  }*/
-
   def about = Action {
     Ok(views.html.index())
   }
@@ -75,6 +36,10 @@ class ChessController @Inject()(cc: ControllerComponents)(implicit system: Actor
     print(gameController.gridToString)
     Ok(views.html.chess(gameController, message))
     //    Ok(chessAsText)
+  }
+
+  def vueChess = Action.async {
+    Future(Ok(views.html.vueChess(gameController, message)))
   }
 
   def turn(row: Int, col: Int, row2: Int, col2: Int) = Action {
