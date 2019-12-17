@@ -144,4 +144,20 @@
             </div>
         }
     </div>
+
+    <script>
+        window.onload = function() {
+            for (let row = 0; row < size; row++) {
+                for (let col = 0; col < size; col++) {
+                    let square = $('#square-' + row + "-" + col);
+                    if ((row + col) % 2 !== 0) {
+                        square.addClass('square-white');
+                    } else {
+                        square.addClass('square-black');
+                    }
+                    //
+                }
+            }
+        }
+    </script>
 }

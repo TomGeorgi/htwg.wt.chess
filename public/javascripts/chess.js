@@ -319,12 +319,6 @@ function connectWebSocket() {
 }
 
 $(document).ready(function () {
-    var app = new Vue({
-        el: '#chess-app',
-        render: function(html) {
-            return html(ChessApp.default, {});
-        }
-    })
     grid = new Grid();
     loadJson();
     connectWebSocket();
