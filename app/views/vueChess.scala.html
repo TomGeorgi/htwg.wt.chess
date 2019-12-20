@@ -109,7 +109,6 @@
 
         <div class="page-container">
             <div id="chess-app"></div>
-
             @if(controller.gameStatus == NEXT_PLAYER) {
                 <div id="message-box" class="alert alert-primary" role="alert">
                     @controller.playerAtTurnToString @message
@@ -128,4 +127,13 @@
             </div>
             }
         </div>
+
+        <script>
+            var app = new Vue({
+                el: '#chess-app',
+                render: function(html) {
+                    return html(ChessApp.default, {});
+                }
+            })
+        </script>
     }
