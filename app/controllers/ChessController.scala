@@ -28,6 +28,11 @@ class ChessController @Inject()(cc: ControllerComponents)(implicit system: Actor
   var cookieToUid: mutable.Map[String, String] = mutable.Map()
   var uidToPlayer: mutable.Map[String, String] = mutable.Map()
 
+  def offline() = Action {
+    implicit request: Request[AnyContent] =>
+      Ok(views.html.offline())
+  }
+
   def about = Action {
     Ok(views.html.index())
   }

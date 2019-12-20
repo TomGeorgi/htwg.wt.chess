@@ -47,7 +47,16 @@ module.exports = {
             return assetFilename.endsWith('.js');
         }
     },
-    devtool: ''
+    devtool: '',
+
+    devServer: {
+        compress: true,
+        host: 'localhost',
+        https: true,
+        open: true,
+        overlay: true,
+        port: 9000
+    }
 };
 
 // If the arguments includes `-p`, it means we are doing the production build.
@@ -67,3 +76,4 @@ if (process.argv.includes('-p')) {
 } else {
     console.log('Webpack for development')
 }
+
