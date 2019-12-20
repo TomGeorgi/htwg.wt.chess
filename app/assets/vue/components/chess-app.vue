@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
   import Vue from 'vue';
 
   Vue.component('game', require('./common/_game.vue').default);

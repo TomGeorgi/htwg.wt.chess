@@ -26,36 +26,14 @@ module.exports = {
                 ],
             },
             {
-                test: /\.ts$/,
-                loader: 'ts-loader',
-                options: {
-                    appendTsSuffixTo: [/\.vue$/],
-                }
-            },
-            {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: 'babel-loader'
-            },
-            {
-                test: /\.js$/,
-                // Exclude transpiling `node_modules`, except `bootstrap-vue/src`
-                exclude: /node_modules\/(?!bootstrap-vue\/src\/)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['env']
-                    }
-                }
             }
         ]
-    },
-    externals: {
-        // The below allows Typescript to `import Vue from 'vue'` without including Vue in the bundle.
-        vue: 'Vue'
-    },
+    }
     resolve: {
-        extensions: ['.ts', '.js', '.vue'],
+        extensions: ['.js', '.vue'],
         alias: {
             // Alias for using source of BootstrapVue
             vue$: 'vue/dist/vue.runtime.esm.js'
