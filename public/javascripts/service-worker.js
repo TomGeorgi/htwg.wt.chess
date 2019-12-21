@@ -16,7 +16,7 @@ self.addEventListener('fetch', function(event) {
         fetch(event.request).catch(function(error) {
                 console.error( '[PWA Info] App offline. Serving stored offline page: ' + error );
                 return caches.open('mypwa-offline').then(function(cache) {
-                    return cache.match('my-offline-page.html');
+                    return cache.match('offline.html');
                 });
             }
         ));

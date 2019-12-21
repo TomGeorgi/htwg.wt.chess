@@ -22,7 +22,7 @@ a:any-link {
     color: black;
     font-family: "Verdana", Geneva, sans-serif;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: normal;
     line-height: 19px;
     margin: 0em;
     margin-top: 0.5em;
@@ -46,7 +46,7 @@ a:any-link {
     color: black;
     font-family: "Verdana", Geneva, sans-serif;
     font-size: 30px;
-    font-weight: bold;
+    font-weight: normal;
     line-height: 33px;
     margin: 0em;
     margin-top: 0.5em;
@@ -70,7 +70,7 @@ a:any-link {
     color: black;
     font-family: "Verdana", Geneva, sans-serif;
     font-size: 40px;
-    font-weight: bold;
+    font-weight: normal;
     line-height: 44px;
     margin: 0em;
     margin-top: 0.5em;
@@ -97,7 +97,7 @@ a:any-link {
     font-size: 60px;
     line-height: 66px;
     font-family: "Verdana",Geneva, sans-serif;
-    font-weight: bold;
+    font-weight: normal;
     color: black;
   }
 }
