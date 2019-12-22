@@ -4,7 +4,7 @@ let selected_col = -1;
 let elements = [];
 
 let player_color = undefined;
-let toggle_board = false;
+let enabled_3d_effects = false;
 
 class Grid {
 
@@ -313,7 +313,39 @@ function connectWebSocket() {
 }
 
 function toggle3DEffect() {
+    let game_container = document.getElementById("game-container");
+    let game = document.getElementById("game");
 
+    if (!enabled_3d_effects) {
+        $(game_container).removeClass("game-container");
+        $(game).removeClass("game");
+
+        $(game_container).addClass("game-container-3d");
+        $(game).addClass("game-3d");
+    } else {
+        $(game_container).removeClass("game-container-3d");
+        $(game).removeClass("game-3d");
+
+        $(game_container).addClass("game-container");
+        $(game).addClass("game");
+    }
+    enabled_3d_effects = !enabled_3d_effects;
+}
+
+function undo() {
+    return $.ajax({
+        method: "GET",
+        url: "/undo",
+        dataType: "html",
+    });
+}
+
+function redo() {
+    return $.ajax({
+        method: "GET",
+        url: "/redo",
+        dataType: "html",
+    });
 }
 
 $(document).ready(function () {

@@ -1,4 +1,6 @@
-
+body {
+  background-color: #ddd;
+}
 
 a:link {
   color: black;
@@ -17,7 +19,7 @@ a:any-link {
     display: block;
   }
 
-  .game-container {
+  .game-container, .game-container-3d {
     height: 100%;
     width: 100%;
     display: inline-flex;
@@ -26,13 +28,46 @@ a:any-link {
     font-size: 16px;
     font-weight: normal;
     line-height: 19px;
-    margin: 0em;
+  }
+
+  .game-container {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
   }
+
+  .game-container-3d {
+    position: relative;
+    top: 6.5em;
+    left: 7em;
+    transform: translate(-50%, -50%) rotate(330deg) skew(25deg);
+  }
+
+  .game-container-3d:before {
+    content: '';
+    position: absolute;
+    top: 0.22em;
+    left: 1.45em;
+    height: 11.1em;
+    width: 0.5em;
+    background: linear-gradient(90deg, #E0E0FF 0%, #E0E0FF 100%);
+    background-size: 5px;
+    transform: rotate(0deg) skewY(-45deg);
+  }
+
+  .game-container-3d:after {
+    content: '';
+    position: absolute;
+    bottom: -0.5em;
+    left: 1.65em;
+    height: 0.51em;
+    width: 11.06em;
+    background: linear-gradient(180deg, #E0E0FF 0%, #E0E0FF 100%);
+    background-size: 120px;
+    transform: rotate(0deg) skewX(-45deg);
+  }
 }
 
-@media (min-width: 480px) {
+@media (min-width: 480px) and (min-height: 300px){
 
   .page-container {
     width: 29em;
@@ -41,7 +76,7 @@ a:any-link {
     display: block;
   }
 
-  .game-container {
+  .game-container, .game-container-3d {
     height: 100%;
     width: 100%;
     display: inline-flex;
@@ -50,13 +85,46 @@ a:any-link {
     font-size: 30px;
     font-weight: normal;
     line-height: 33px;
-    margin: 0em;
+  }
+
+  .game-container {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
   }
+
+  .game-container-3d {
+    position: relative;
+    top: 6.5em;
+    left: 7em;
+    transform: translate(-50%, -50%) rotate(330deg) skew(25deg);
+  }
+
+  .game-container-3d:before {
+    content: '';
+    position: absolute;
+    top: 0.15em;
+    left: 1.7em;
+    height: 11.1em;
+    width: 0.5em;
+    background: linear-gradient(90deg, #E0E0FF 0%, #E0E0FF 100%);
+    background-size: 5px;
+    transform: rotate(0deg) skewY(-45deg);
+  }
+
+  .game-container-3d:after {
+    content: '';
+    position: absolute;
+    bottom: -0.5em;
+    left: 1.93em;
+    height: 0.51em;
+    width: 11.06em;
+    background: linear-gradient(180deg, #E0E0FF 0%, #E0E0FF 100%);
+    background-size: 120px;
+    transform: rotate(0deg) skewX(-45deg);
+  }
 }
 
-@media (min-width: 800px) {
+@media (min-width: 1000px) and (min-height: 600px) {
 
   .page-container {
     width: 33.5em;
@@ -65,7 +133,7 @@ a:any-link {
     display: block;
   }
 
-  .game-container {
+  .game-container, .game-container-3d {
     height: 100%;
     width: 100%;
     display: inline-flex;
@@ -74,13 +142,46 @@ a:any-link {
     font-size: 40px;
     font-weight: normal;
     line-height: 44px;
-    margin: 0em;
+  }
+
+  .game-container {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
   }
+
+  .game-container-3d {
+    position: relative;
+    top: 6.5em;
+    left: 7em;
+    transform: translate(-50%, -50%) rotate(330deg) skew(25deg);
+  }
+
+  .game-container-3d:before {
+    content: '';
+    position: absolute;
+    top: 0.22em;
+    left: 0.65em;
+    height: 11.1em;
+    width: 0.5em;
+    background: linear-gradient(90deg, #E0E0FF 0%, #E0E0FF 100%);
+    background-size: 5px;
+    transform: rotate(0deg) skewY(-45deg);
+  }
+
+  .game-container-3d:after {
+    content: '';
+    position: absolute;
+    bottom: -0.5em;
+    left: 0.9em;
+    height: 0.51em;
+    width: 11.06em;
+    background: linear-gradient(180deg, #E0E0FF 0%, #E0E0FF 100%);
+    background-size: 120px;
+    transform: rotate(0deg) skewX(-45deg);
+  }
 }
 
-@media (min-width: 1000px) {
+@media (min-width: 1200px) and (min-height: 800px) {
 
   .page-container {
     width: 51em;
@@ -89,18 +190,53 @@ a:any-link {
     display: block;
   }
 
-  .game-container {
+  .game-container, .game-container-3d {
     height: 100%;
     width: 100%;
     display: inline-flex;
-    margin: 0em;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
     font-size: 60px;
     line-height: 66px;
     font-family: "Verdana",Geneva, sans-serif;
     font-weight: normal;
     color: black;
+  }
+
+  .game-container {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    transition: .5s;
+  }
+
+  .game-container-3d {
+    transition: .5s;
+    position: relative;
+    top: 6.5em;
+    left: 7em;
+    transform: translate(-50%, -50%) rotate(330deg) skew(25deg);
+  }
+
+  .game-container-3d:before {
+    content: '';
+    position: absolute;
+    top: 0.22em;
+    left: 0.79em;
+    height: 11.1em;
+    width: 0.5em;
+    background: linear-gradient(90deg, #E0E0FF 0%, #E0E0FF 100%);
+    background-size: 5px;
+    transform: rotate(0deg) skewY(-45deg);
+  }
+
+  .game-container-3d:after {
+    content: '';
+    position: absolute;
+    bottom: -0.5em;
+    left: 1.02em;
+    height: 0.51em;
+    width: 11.06em;
+    background: linear-gradient(180deg, #E0E0FF 0%, #E0E0FF 100%);
+    background-size: 120px;
+    transform: rotate(0deg) skewX(-45deg);
   }
 }
 
@@ -108,7 +244,7 @@ a:any-link {
   text-align: center;
 }
 
-.game {
+.game, .game-3d {
   border-style: inset;
   border-width: 0.05em;
   border-spacing: 0em;
@@ -117,6 +253,16 @@ a:any-link {
   background-color: black;
   margin: auto;
   width: auto;
+}
+
+.game-3d {
+  transition: 0.1s;
+  box-shadow: -30px 30px 30px rgba(0, 0, 0, .5);
+}
+
+.game-3d:hover {
+  transition: 0.1s;
+  box-shadow: -50px 50px 50px rgba(0, 0, 0, .5);
 }
 
 .clear {
@@ -216,6 +362,10 @@ p {
   -webkit-box-shadow: inset 0 0 15px #0f0;
 }
 
+.selected:hover {
+  transition: 0.5s;
+}
+
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
@@ -224,4 +374,21 @@ p {
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
+}
+
+.piece {
+  transition: 0.25s;
+  text-shadow:
+          #ccc 0 1px 0,
+          #c9c9c9 0 2px 0,
+          #bbb 0 3px 0,
+          #b9b9b9 0 4px 0,
+          #aaa 0 5px 0,
+          rgba(0,0,0,.1) 0 6px 1px,
+          rgba(0,0,0,.1) 0 0 5px,
+          rgba(0,0,0,.3) 0 1px 3px,
+          rgba(0,0,0,.15) 0 3px 5px,
+          rgba(0,0,0,.2) 0 5px 10px,
+          rgba(0,0,0,.2) 0 10px 10px,
+          rgba(0,0,0,.1) 0 20px 20px;
 }
