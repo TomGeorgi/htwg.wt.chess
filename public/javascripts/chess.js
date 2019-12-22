@@ -4,6 +4,7 @@ let selected_col = -1;
 let elements = [];
 
 let player_color = undefined;
+let toggle_board = false;
 
 class Grid {
 
@@ -35,8 +36,8 @@ let grid;
 function updateBoard(grid) {
     for (let row = 0; row < grid.size; row++) {
         for (let col = 0; col < grid.size; col++) {
-            let html = "<div class='cell'" + /* draggable='true'*/ ">" + grid.cells[row][col].toString();
-            $("#square-" + row + "-" + col).html(grid.cells[row][col].toString());
+            let html = "<div class='piece'>" + grid.cells[row][col].toString() + "</div>";
+            $("#square-" + row + "-" + col).html(html);
         }
     }
 }
@@ -140,13 +141,6 @@ function loadJson() {
 }
 
 function doTurn(row, col, row_two, col_two) {
-    /*$.get("/turn/" + row.toString() + "/" + col.toString() +
-        "/" + row_two.toString() + "/" + col_two.toString(),
-        function (data) {
-            console.log("Do Turn on Server");
-        }
-    );*/
-    //console.log(player_color.toString())
     $.ajax({
         method: "GET",
         url: "/turn/" + row.toString() + "/" + col.toString() + "/" + row_two.toString() + "/" + col_two.toString(),
@@ -316,6 +310,10 @@ function connectWebSocket() {
             updateGameStatus();
         }
     }
+}
+
+function toggle3DEffect() {
+
 }
 
 $(document).ready(function () {

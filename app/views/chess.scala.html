@@ -11,7 +11,8 @@
 }
 
 @main("HTWG Chess") {
-    <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/chess.css")' />
+    <link id="3d-style" rel="stylesheet" href='@routes.Assets.versioned("stylesheets/3d-chess-style.css")' />
+    <link id="normal-style" rel="stylesheet" href='@routes.Assets.versioned("stylesheets/chess.css")' disabled="disabled"/>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">HTWG Chess</a>
@@ -33,11 +34,15 @@
                         <a class="dropdown-item" data-toggle="modal" data-target="#newGameWithNames">New Game with Player Name input</a>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/undo">Undo</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/redo">Redo</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Edit
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/undo">Undo</a>
+                        <a class="dropdown-item" href="/redo">Redo</a>
+                        <a class="dropdown-item" onclick="toggle3DEffect(event)">Toggle 3D Effect</a>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -80,7 +85,28 @@
         </div>
     </div>
 
-    <h1 id="Inline-Title" class="card-header">Chess</h1>
+    <!--<h1 id="Inline-Title" class="card-header">Chess</h1>-->
+
+    <div class="col-md-3" id="notification" style="top: 2em; left: 1em;">
+        @if(controller.gameStatus == NEXT_PLAYER) {
+            <div id="message-box" class="alert alert-primary" role="alert">
+                @controller.playerAtTurnToString @message
+            </div>
+        } else if(controller.gameStatus == CHECK_MATE) {
+        <div id="message-box" class="alert alert-danger" role="alert">
+            @controller.playerNotAtTurnToString @message
+        </div>
+        } else if(controller.gameStatus == MOVE_NOT_VALID)  {
+        <div id="message-box" class="alert alert-danger" role="alert">
+            @controller.playerAtTurn @message
+        </div>
+        } else {
+        <div id="message-box" class="alert alert-warning" role="alert">
+            @controller.playerAtTurnToString, @message
+        </div>
+        }
+    </div>
+
 
     <div class="page-container">
         <div class="game-container">
@@ -92,9 +118,11 @@
                         </span>
                         @for(col <- 0 until size) {
                             <div id="square-@(row)-@(col)" class="noselect" ondragstart="handleFigureOnDrag(event)">
-                                @if(!controller.grid.cell(row, col).isSet) {
-                                    <div class="clear"></div>
-                                }
+                                <div class="piece">
+                                    @if(!controller.grid.cell(row, col).isSet) {
+                                        <div class="clear"></div>
+                                    }
+                                </div>
                             </div>
                         }
                     </div>
@@ -106,24 +134,8 @@
                 }
             </div>
         </div>
-        @if(controller.gameStatus == NEXT_PLAYER) {
-            <div id="message-box" class="alert alert-primary" role="alert">
-                @controller.playerAtTurnToString @message
-            </div>
-        } else if(controller.gameStatus == CHECK_MATE) {
-            <div id="message-box" class="alert alert-danger" role="alert">
-                @controller.playerNotAtTurnToString @message
-            </div>
-        } else if(controller.gameStatus == MOVE_NOT_VALID)  {
-            <div id="message-box" class="alert alert-danger" role="alert">
-                @controller.playerAtTurn @message
-            </div>
-        } else {
-            <div id="message-box" class="alert alert-warning" role="alert">
-                @controller.playerAtTurnToString, @message
-            </div>
-        }
     </div>
+
 
     <script>
         for (let row = 0; row < size; row++) {
@@ -138,4 +150,5 @@
             }
         }
     </script>
+
 }
