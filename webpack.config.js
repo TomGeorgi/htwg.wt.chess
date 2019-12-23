@@ -31,7 +31,7 @@ module.exports = {
                 loader: 'babel-loader'
             }
         ]
-    }
+    },
     resolve: {
         extensions: ['.js', '.vue'],
         alias: {
