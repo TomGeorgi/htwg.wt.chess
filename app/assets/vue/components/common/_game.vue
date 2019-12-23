@@ -1,8 +1,6 @@
-import Vue from "vue";
-
 <template>
-    <div class="game-container">
-        <div class="game">
+    <div id="game-container" class="game-container">
+        <div id="game" class="game">
             <div v-for="row in rows" class="c-row" :key="row">
                 <span class="number">
                     {{ size - row }}
@@ -13,7 +11,7 @@ import Vue from "vue";
                 </div>
             </div>
             <div class="clear"></div>
-            <letter-box></letter-box>
+            <letter-box/>
         </div>
     </div>
 </template>

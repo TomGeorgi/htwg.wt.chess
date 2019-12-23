@@ -11,11 +11,3 @@
 
   export default Vue.extend({});
 </script>
-
-<style scoped lang="scss">
-  .greeting-form {
-    display: block;
-    text-align: center;
-    padding: 25px 0px;
-  }
-</style>
