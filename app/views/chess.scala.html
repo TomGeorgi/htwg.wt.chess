@@ -1,6 +1,16 @@
 @import de.htwg.se.Chess.controller.controllerComponent.GameStatus._
 
-@(controller: de.htwg.se.Chess.controller.controllerComponent.ControllerInterface, message: String)
+@import play.api.i18n.Messages
+@import play.api.mvc.RequestHeader
+@import org.webjars.play.WebJarsUtil
+@import controllers.AssetsFinder
+@import play.api.data._
+@import forms.TotpSetupForm.Data
+@import com.mohiva.play.silhouette.impl.providers.GoogleTotpCredentials
+@import com.mohiva.play.silhouette.impl.providers.GoogleTotpInfo
+
+@(controller: de.htwg.se.Chess.controller.controllerComponent.ControllerInterface, message: String, user: models.User, totpInfoOpt: Option[GoogleTotpInfo], totpDataOpt: Option[(Form[Data], GoogleTotpCredentials)] = None)(implicit request: RequestHeader,
+        messages: Messages, webJarsUtil: WebJarsUtil, assets: AssetsFinder)
 
 @size = @{
     controller.grid.size
@@ -11,7 +21,6 @@
 }
 
 @main("HTWG Chess") {
-    <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/chess.css")' />
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">HTWG Chess</a>
@@ -33,11 +42,15 @@
                         <a class="dropdown-item" data-toggle="modal" data-target="#newGameWithNames">New Game with Player Name input</a>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/undo">Undo</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/redo">Redo</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Edit
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" onclick="undo()">Undo</a>
+                        <a class="dropdown-item" onclick="redo()">Redo</a>
+                        <a class="dropdown-item" onclick="toggle3DEffect(event)">Toggle 3D Effect</a>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -80,11 +93,32 @@
         </div>
     </div>
 
-    <h1 id="Inline-Title" class="card-header">Chess</h1>
+    <!--<h1 id="Inline-Title" class="card-header">Chess</h1>-->
+
+    <div class="col-md-3" id="notification" style="top: 2em; left: 1em;">
+        @if(controller.gameStatus == NEXT_PLAYER) {
+            <div id="message-box" class="alert alert-primary" role="alert">
+                @controller.playerAtTurnToString @message
+            </div>
+        } else if(controller.gameStatus == CHECK_MATE) {
+        <div id="message-box" class="alert alert-danger" role="alert">
+            @controller.playerNotAtTurnToString @message
+        </div>
+        } else if(controller.gameStatus == MOVE_NOT_VALID)  {
+        <div id="message-box" class="alert alert-danger" role="alert">
+            @controller.playerAtTurn @message
+        </div>
+        } else {
+        <div id="message-box" class="alert alert-warning" role="alert">
+            @controller.playerAtTurnToString, @message
+        </div>
+        }
+    </div>
+
 
     <div class="page-container">
-        <div class="game-container">
-            <div class="game">
+        <div id="game-container" class="game-container">
+            <div id="game" class="game">
                 @for(row <- 0 until size) {
                     <div class="c-row">
                         <span class="number">
@@ -92,9 +126,11 @@
                         </span>
                         @for(col <- 0 until size) {
                             <div id="square-@(row)-@(col)" class="noselect" ondragstart="handleFigureOnDrag(event)">
-                                @if(!controller.grid.cell(row, col).isSet) {
-                                    <div class="clear"></div>
-                                }
+                                <div class="piece">
+                                    @if(!controller.grid.cell(row, col).isSet) {
+                                        <div class="clear"></div>
+                                    }
+                                </div>
                             </div>
                         }
                     </div>
@@ -106,28 +142,12 @@
                 }
             </div>
         </div>
-        @if(controller.gameStatus == NEXT_PLAYER) {
-            <div id="message-box" class="alert alert-primary" role="alert">
-                @controller.playerAtTurnToString @message
-            </div>
-        } else if(controller.gameStatus == CHECK_MATE) {
-            <div id="message-box" class="alert alert-danger" role="alert">
-                @controller.playerNotAtTurnToString @message
-            </div>
-        } else if(controller.gameStatus == MOVE_NOT_VALID)  {
-            <div id="message-box" class="alert alert-danger" role="alert">
-                @controller.playerAtTurn @message
-            </div>
-        } else {
-            <div id="message-box" class="alert alert-warning" role="alert">
-                @controller.playerAtTurnToString, @message
-            </div>
-        }
     </div>
 
+
     <script>
-        for (let row = 0; row < size; row++) {
-            for (let col = 0; col < size; col++) {
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
                 let square = $('#square-' + row + "-" + col);
                 if ((row + col) % 2 !== 0) {
                     square.addClass('square-white');
@@ -138,4 +158,8 @@
             }
         }
     </script>
+
+    <link id="style" rel="stylesheet" href='@assets.path("styles/chess.css")'/>
+    <script src="@assets.path("javascripts/chess.js")" ></script>
+
 }

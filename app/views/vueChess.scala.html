@@ -1,17 +1,27 @@
 @import de.htwg.se.Chess.controller.controllerComponent.GameStatus._
 
-@(controller: de.htwg.se.Chess.controller.controllerComponent.ControllerInterface, message: String)
+@import play.api.i18n.Messages
+@import play.api.mvc.RequestHeader
+@import org.webjars.play.WebJarsUtil
+@import controllers.AssetsFinder
+@import play.api.data._
+@import forms.TotpSetupForm.Data
+@import com.mohiva.play.silhouette.impl.providers.GoogleTotpCredentials
+@import com.mohiva.play.silhouette.impl.providers.GoogleTotpInfo
+
+@(controller: de.htwg.se.Chess.controller.controllerComponent.ControllerInterface, message: String, user: models.User, totpInfoOpt: Option[GoogleTotpInfo], totpDataOpt: Option[(Form[Data], GoogleTotpCredentials)] = None)(implicit request: RequestHeader,
+        messages: Messages, webJarsUtil: WebJarsUtil, assets: AssetsFinder)
 
 @playerAtTurnToString = @{
     controller.playerAtTurnToString
 }
 
 @main("HTWG Chess") {
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js"></script>
-    <script src='@routes.Assets.versioned("vue/components/chess-app.js")'></script>
+    <script src='@assets.path("vue/components/chess-app.js")'></script>
 
-    <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/chess.css")' />
-
+    <link id="style" rel="stylesheet" href="@assets.path("styles/chess.css")"/>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">HTWG Chess</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,4 +120,6 @@
             }
         })
     </script>
+
+    <script src="@assets.path("javascripts/chess.js")" ></script>
 }

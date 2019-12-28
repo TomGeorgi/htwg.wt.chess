@@ -1,0 +1,169 @@
+@import play.api.i18n.Messages
+@import play.api.mvc.RequestHeader
+@import org.webjars.play.WebJarsUtil
+@import controllers.AssetsFinder
+@import play.api.data._
+@import forms.TotpSetupForm.Data
+@import com.mohiva.play.silhouette.impl.providers.GoogleTotpCredentials
+@import com.mohiva.play.silhouette.impl.providers.GoogleTotpInfo
+
+@(user: models.User, totpInfoOpt: Option[GoogleTotpInfo], totpDataOpt: Option[(Form[Data], GoogleTotpCredentials)] = None)(implicit request: RequestHeader,
+        messages: Messages, webJarsUtil: WebJarsUtil, assets: AssetsFinder)
+
+@main(messages("home.title"), Some(user)) {
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">HTWG Chess</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/chess">Play <span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="card">
+        <h1 class="card-header text-center">About Chess</h1>
+        <div class="card-body">
+            <p class="card-text">
+                Chess is a two-player strategy board game played on a checkered
+                board with 64 squares arranged in an 8×8 grid.
+                The game is played by millions of people worldwide.
+            </p>
+
+            <hr>
+
+            <p class="card-text">
+                Play involves no hidden information. Each player begins with 16 pieces: one king, one queen, two rooks, two knights,
+                two bishops, and eight pawns. Each piece type moves differently, with the most powerful being the queen and the least
+                powerful the pawn. The objective is to checkmate the opponent's king by placing it under an inescapable threat
+                of capture. To this end, a player's pieces are used to attack and capture the opponent's pieces, while supporting each other.
+                During the game, play typically involves exchanging pieces for the opponent's similar pieces, and finding and engineering
+                opportunities to trade advantageously or to get a better position. In addition to checkmate, a player wins the game if the
+                opponent resigns, or (in a timed game) runs out of time. There are also several ways that a game can end in a draw.
+            </p>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">
+                                The following image shows a typical Chess board in real life: <br>
+                            </p>
+                            <p class="card-img">
+                                <img id="chess-image" src=@assets.path("images/ChessStartingPosition.jpg") class="img-fluid">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="col-sm-1 align-self-center">
+                    <a href="/" class="btn btn-primary">Start A Game</a>
+                </div>-->
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">
+                                A picture about a checkmate is shown belown. <br>
+                            </p>
+                            <p class="card-img">
+                                <img id="checkmate-image" src=@assets.path("images/checkmate.jpg") class="img-fluid">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <a href="/chess" class="btn btn-primary">Start A Game</a>
+    </div>
+
+    <div class="card">
+        <h1 class="card-header text-center">Historic Background</h1>
+        <div class="card-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <p class="card-text">
+                            Chess is believed to be derived from the Indian game chaturanga
+                            sometime before the 7th century. Chaturanga is also the likely ancestor of the Eastern strategy games xiangqi (Chinese chess),
+                            janggi (Korean chess), and shogi (Japanese chess). Chess reached Europe by the 9th century, due to the Umayyad conquest of Hispania.
+                            The pieces assumed their current powers in Spain in the late 15th century; the modern rules were standardized in the 19th century.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h1 class="card-header text-center">Rules</h1>
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <p class="card-text">
+                        The player controlling the white pieces is named "White"; the player controlling the black pieces is named
+                        "Black". White moves first, then players alternate moves. Making a move is required; it is not legal to skip
+                        a move, even when having to move is detrimental. Play continues until a king is checkmated, a player resigns,
+                        or a draw is declared, as explained below. In addition, if the game is being played under a time control
+                        players who exceed their time limit lose the game.
+                    </p>
+                </div>
+                <div class="col">
+                    <p class="card-text">
+                        The official chess rules do not include a procedure for determining who plays White.
+                        Instead, this decision is left open to tournament-specific rules
+                        (e.g. a Swiss system tournament or round-robin tournament) or, in the case of non-competitive play,
+                        mutual agreement, in which case some kind of random choice is often employed.
+                        A common method is for one player to conceal a piece (usually a pawn) of each color in either hand;
+                        the other player chooses a hand to open, and receives the color of the piece that is revealed.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h1 class="card-header text-center">Moveset</h1>
+        <div class="row">
+            <div class="col">
+                <ul class="list-group">
+                    <li class="list-group-item">The king moves exactly one square horizontally, vertically, or diagonally.</li>
+                    <li class="list-group-item">A rook moves any number of vacant squares horizontally or vertically. It also is moved when castling.</li>
+                    <li class="list-group-item">A bishop moves any number of vacant squares diagonally.</li>
+                    <li class="list-group-item">The queen moves any number of vacant squares horizontally, vertically, or diagonally.</li>
+                    <li class="list-group-item">A knight moves to the nearest square not on the same rank, file, or diagonal. (This can be thought of as moving <br/>
+                        two squares horizontally then one square vertically, or moving one square horizontally <br/>
+                        then two squares vertically—i.e. in an "L" pattern.) The knight is not blocked by other pieces: it jumps to the new location.</li>
+
+                </ul>
+            </div>
+            <div class="col">
+                <p class="list-group-item">Pawns have the most complex rules of movement:</p>
+                <ul class="list-group">
+                    <li class="list-group-item">A pawn moves straight forward one square, if that square is vacant. If it has not yet moved, a pawn also has the option of moving two squares straight forward, provided both squares are vacant. Pawns cannot move backwards.</li>
+                    <li class="list-group-item">Pawns are the only pieces that capture differently from how they move. A pawn can capture an enemy piece on either of the two squares diagonally in front of the pawn (but cannot move to those squares if they are vacant).</li>
+                    <li class="list-group-item">The pawn is also involved in the two special moves en passant and promotion (Schiller 2003:17–19)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <a href="/chess" class="btn btn-primary">Start A Game</a>
+    </div>
+
+    <div class="card">
+        <h1 class="card-header text-center">Source</h1>
+
+        <a href="https://en.wikipedia.org/wiki/Chess" class="btn btn-primary">Chess</a>
+        <a href="https://en.wikipedia.org/wiki/Rules_of_chess" class="btn btn-primary">Rules of Chess</a>
+    </div>
+
+}
