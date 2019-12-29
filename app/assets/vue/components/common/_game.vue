@@ -3,7 +3,7 @@
         <div id="game" class="game">
             <div v-for="row in rows" class="c-row" :key="row">
                 <span class="number">
-                    {{ size - row }}
+                    {{ 8 - row }}
                 </span>
                 <div v-for="col in cols" :key="col" :id="'square-' + row + '-' + col" class="noselect">
                     <slot></slot>
@@ -27,8 +27,8 @@
             cols: [0, 1, 2, 3, 4, 5, 6, 7],
         }),
         mounted: function () {
-            for (let row = 0; row < size; row++) {
-                for (let col = 0; col < size; col++) {
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
                     let square = $('#square-' + row + "-" + col);
                     if ((row + col) % 2 !== 0) {
                         square.addClass('square-white');
