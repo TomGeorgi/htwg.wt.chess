@@ -21,40 +21,41 @@
 }
 
 @main("HTWG Chess") {
+    <script>
+        let left_items = document.getElementById("left-items");
+        let new_item = document.createElement("li");
+        new_item.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  New
+                              </a>
+                              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                  <a class="dropdown-item" onclick="newGame(event)">New</a>
+                                  <a class="dropdown-item" data-toggle="modal" data-target="#newGameWithNames">New Game with Player Name input</a>
+                              </div>`;
+        new_item.className = "nav-item dropdown";
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">HTWG Chess</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        let edit_item = document.createElement("li");
+        edit_item.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                   Edit
+                               </a>
+                               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                   <a class="dropdown-item" onclick="undo()">Undo</a>
+                                   <a class="dropdown-item" onclick="redo()">Redo</a>
+                                   <a class="dropdown-item" onclick="toggle3DEffect(event)">Toggle 3D Effect</a>
+                               </div>`;
+        left_items.appendChild(new_item);
+        left_items.appendChild(edit_item);
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/about">About <span class="sr-only">(current)</span> </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        New
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" onclick="newGame(event)">New</a>
-                        <a class="dropdown-item" data-toggle="modal" data-target="#newGameWithNames">New Game with Player Name input</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Edit
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" onclick="undo()">Undo</a>
-                        <a class="dropdown-item" onclick="redo()">Redo</a>
-                        <a class="dropdown-item" onclick="toggle3DEffect(event)">Toggle 3D Effect</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
+        let content_item = document.getElementById("content");
+        content_item.classList.remove("row");
+        content_item.classList.remove("col");
+        content_item.classList.remove("text-center");
+        content_item.classList.remove("justify-content-center");
+        content_item.classList.remove("align-self-center");
+        content_item.classList.remove("starter-template");
+
+        let request_box = document.getElementById("request-box");
+        request_box.style.marginTop = "0";
+    </script>
 
     <div class="modal fade" id="newGameWithNames" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -87,15 +88,15 @@
                     <div id="error-box"></div>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <a onclick="newGameWithNames(event)" id="play-button" class="btn btn-primary" type="button">Play</a>
-                    <!--<a href="/new/#player-one-name/#player-two-name"class="btn btn-primary" type="button">Play</a>-->
+                        <!--<a href="/new/#player-one-name/#player-two-name"class="btn btn-primary" type="button">Play</a>-->
                 </div>
             </div>
         </div>
     </div>
 
-    <!--<h1 id="Inline-Title" class="card-header">Chess</h1>-->
+        <!--<h1 id="Inline-Title" class="card-header">Chess</h1>-->
 
-    <div class="col-md-3" id="notification" style="top: 2em; left: 1em;">
+    <div class="col-md-5" id="notification" style="top: 10px; left: 10px">
         @if(controller.gameStatus == NEXT_PLAYER) {
             <div id="message-box" class="alert alert-primary" role="alert">
                 @controller.playerAtTurnToString @message
@@ -122,14 +123,14 @@
                 @for(row <- 0 until size) {
                     <div class="c-row">
                         <span class="number">
-                            @(size - row)
+                        @(size - row)
                         </span>
                         @for(col <- 0 until size) {
                             <div id="square-@(row)-@(col)" class="noselect" ondragstart="handleFigureOnDrag(event)">
                                 <div class="piece">
-                                    @if(!controller.grid.cell(row, col).isSet) {
-                                        <div class="clear"></div>
-                                    }
+                                @if(!controller.grid.cell(row, col).isSet) {
+                                    <div class="clear"></div>
+                                }
                                 </div>
                             </div>
                         }
@@ -146,17 +147,17 @@
 
 
     <script>
-        for (let row = 0; row < 8; row++) {
-            for (let col = 0; col < 8; col++) {
-                let square = $('#square-' + row + "-" + col);
-                if ((row + col) % 2 !== 0) {
-                    square.addClass('square-white');
-                } else {
-                    square.addClass('square-black');
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    let square = $('#square-' + row + "-" + col);
+                    if ((row + col) % 2 !== 0) {
+                        square.addClass('square-white');
+                    } else {
+                        square.addClass('square-black');
+                    }
+                    //
                 }
-                //
             }
-        }
     </script>
 
     <link id="style" rel="stylesheet" href='@assets.path("styles/chess.css")'/>

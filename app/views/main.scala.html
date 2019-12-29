@@ -27,39 +27,40 @@
             <![endif]-->
     </head>
     <body>
-        <header class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">@messages("toggle.navigation")</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
+        <header class="navbarnavbar-fixed-top" role="navigation">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                    <a class="navbar-brand" href="@controllers.routes.ApplicationController.index"></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
                     </button>
-                    <a class="navbar-brand" href="@controllers.routes.ApplicationController.index">Web Chess</a>
-                </div>
-                <nav class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="@controllers.routes.ApplicationController.index">@messages("home")</a></li>
-                        <li><a href="https://github.com/TomGeorgi/htwg.wt.chess">GitHub</a></li>
+                    <ul class="navbar-nav mr-auto" id="left-items">
+                        <li class="nav-item">
+                            <a class="nav-link" href="@controllers.routes.ApplicationController.index">@messages("home")</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://github.com/TomGeorgi/htwg.wt.chess">GitHub</a>
+                        </li>
                     </ul>
-                    <ul class="nav navbar-nav navbar-right">
+                </div>
+                <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                    <ul class="navbar-nav ml-auto">
                         @user.map { u =>
-                            <li><a href="@controllers.routes.ApplicationController.index">@u.name</a></li>
-                            @if(u.loginInfo.providerID == com.mohiva.play.silhouette.impl.providers.CredentialsProvider.ID) {
-                                <li><a href="@controllers.routes.ChangePasswordController.view">@messages("change.password")</a></li>
-                            }
-                            <li><a href="@controllers.routes.ApplicationController.signOut">@messages("sign.out")</a></li>
+                        <li class="nav-item"><a class="nav-link" href="@controllers.routes.ApplicationController.index">@u.name</a></li>
+                        @if(u.loginInfo.providerID == com.mohiva.play.silhouette.impl.providers.CredentialsProvider.ID) {
+                            <li class="nav-item"><a class="nav-link" href="@controllers.routes.ChangePasswordController.view">@messages("change.password")</a></li>
+                        }
+                        <li class="nav-item"><a class="nav-link" href="@controllers.routes.ApplicationController.signOut">@messages("sign.out")</a></li>
                         }.getOrElse {
-                            <li><a href="@controllers.routes.SignInController.view">@messages("sign.in")</a></li>
-                            <li><a href="@controllers.routes.SignUpController.view">@messages("sign.up")</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@controllers.routes.SignInController.view">@messages("sign.in")</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@controllers.routes.SignUpController.view">@messages("sign.up")</a></li>
                         }
                     </ul>
-                </nav>
-            </div>
+                </div>
+            </nav>
         </header>
         <main class="container">
-            <div class="starter-template row">
+            <div class="starter-template row col text-center justify-content-center align-self-center" style="margin-top: 50px" id="request-box">
                 @request.flash.get("error").map { msg =>
                     <div class="col-md-6 col-md-offset-3 alert alert-danger">
                         <a href="#" class="close" data-dismiss="alert">&times;</a>
@@ -78,6 +79,8 @@
                         <strong>@messages("success")</strong> @msg
                     </div>
                 }
+            </div>
+            <div class="starter-template row col text-center justify-content-center align-self-center" id="content">
                 @content
             </div>
         </main>
