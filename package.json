@@ -1,4 +1,9 @@
 {
+  "name": "htwg-web-chess",
+  "version": "1.0.0",
+  "engines": {
+    "node": "12.14.x"
+  },
   "dependencies": {
     "register-service-worker": "^1.6.2"
   },
@@ -30,7 +35,7 @@
     "not ie <= 8"
   ],
   "scripts": {
-    "postinstall": "npm install",
+    "postinstall": "npm install && npm run build",
     "dev": "webpack-dev-server --progress"
   }
 }
