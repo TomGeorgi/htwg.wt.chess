@@ -30,6 +30,7 @@
     "not ie <= 8"
   ],
   "scripts": {
+    "postinstall": "npm install",
     "dev": "webpack-dev-server --progress"
   }
 }
