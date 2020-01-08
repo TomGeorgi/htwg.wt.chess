@@ -34,7 +34,7 @@
     "not ie <= 8"
   ],
   "keywords": [
-    "heroku",
+    "heroku"
   ],
   "scripts": {
     "postinstall": "npm install && npm run build",
