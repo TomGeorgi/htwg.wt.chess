@@ -10,3 +10,5 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.1.2")
 resolvers += Resolver.bintrayRepo("givers", "maven")
 
 addSbtPlugin("givers.vuefy" % "sbt-vuefy" % "4.1.0")
+
+addSbtPlugin("com.heroku" % "sbt-heroku" % "2.1.2")

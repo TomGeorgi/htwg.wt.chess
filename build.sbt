@@ -4,6 +4,8 @@ import scalariform.formatter.preferences._
 
 name := "Web Chess"
 
+herokuAppName in Compile := "whispering-stream-57382"
+
 version := "1.8.0"
 
 scalaVersion := "2.12.8"
