@@ -7,14 +7,14 @@ invalid.recovery.code = Invalid recovery code!
 access.denied = Access denied!
 could.not.authenticate = Could not authenticate with social provider! Please try again!
 
-home.title = Silhouette - Home
-sign.up.title = Silhouette - Sign Up
-sign.in.title = Silhouette - Sign In
-totp.title = Silhouette - TOTP
-forgot.password.title = Silhouette - Forgot Password
-reset.password.title = Silhouette - Reset Password
-change.password.title = Silhouette - Change Password
-activate.account.title = Silhouette - Activate Account
+home.title = Chess - Home
+sign.up.title = Chess - Sign Up
+sign.in.title = Chess - Sign In
+totp.title = Chess - TOTP
+forgot.password.title = Chess - Forgot Password
+reset.password.title = Chess - Reset Password
+change.password.title = Chess - Change Password
+activate.account.title = Chess - Activate Account
 
 toggle.navigation = Toggle navigation
 welcome.signed.in = Welcome, you are now signed in!
@@ -100,7 +100,7 @@ yahoo = Yahoo
 # Emails
 ##########
 
-email.from = Silhouette <noreply@mohiva.com>
+email.from = Chess <noreply@mohiva.com>
 
 # Sign Up
 email.sign.up.subject = Welcome
