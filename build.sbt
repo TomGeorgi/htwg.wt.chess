@@ -2,9 +2,11 @@ import com.typesafe.sbt.SbtScalariform._
 
 import scalariform.formatter.preferences._
 
-name := "Web Chess"
+name := "htwg-web-chess"
 
-herokuAppName in Compile := "whispering-stream-57382"
+herokuAppName in Compile := "htwg-web-chess"
+
+herokuJdkVersion in Compile := "11"
 
 version := "1.8.0"
 

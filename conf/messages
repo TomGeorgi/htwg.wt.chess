@@ -100,7 +100,7 @@ yahoo = Yahoo
 # Emails
 ##########
 
-email.from = Chess <noreply@mohiva.com>
+email.from = Chess Team <noreply.web.chess@gmail.com>
 
 # Sign Up
 email.sign.up.subject = Welcome

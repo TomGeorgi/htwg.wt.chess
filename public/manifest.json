@@ -6,6 +6,11 @@
   "short_name": "Chess",
   "icons": [
     {
+      "src": "assets/img/icons/chess-icon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
     "src": "assets/img/icons/chess-icon-32x32.png",
     "sizes": "32x32",
     "type": "image/png"
