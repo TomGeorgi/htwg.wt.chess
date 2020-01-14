@@ -12,7 +12,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" type="image/png" href="@assets.path("img/icons/chess-icon-16x16.png")">
+        <link rel="shortcut icon" type="image/png" href="@assets.path("img/icons/chess_icon-16x16.png")">
         <title>@title</title>
         <link href="//fonts.googleapis.com/css?family=Roboto|Montserrat:400,700|Open+Sans:400,300,600" rel="stylesheet">
         <link href="//cdnjs.cloudflare.com/ajax/libs/ionicons/1.5.2/css/ionicons.min.css" rel="stylesheet">
@@ -27,13 +27,13 @@
             <![endif]-->
     </head>
     <body>
-        <header class="navbarnavbar-fixed-top" role="navigation">
+        <header class="navbar-fixed-top" role="navigation">
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="@controllers.routes.ApplicationController.index">Web Chess</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-                    <a class="navbar-brand" href="@controllers.routes.ApplicationController.index"></a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
                     <ul class="navbar-nav mr-auto" id="left-items">
                         <li class="nav-item">
                             <a class="nav-link" href="@controllers.routes.ApplicationController.index">@messages("home")</a>
@@ -45,16 +45,16 @@
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                     <ul class="navbar-nav ml-auto">
-                        @user.map { u =>
-                        <li class="nav-item"><a class="nav-link" href="@controllers.routes.ApplicationController.index">@u.name</a></li>
-                        @if(u.loginInfo.providerID == com.mohiva.play.silhouette.impl.providers.CredentialsProvider.ID) {
-                            <li class="nav-item"><a class="nav-link" href="@controllers.routes.ChangePasswordController.view">@messages("change.password")</a></li>
-                        }
-                        <li class="nav-item"><a class="nav-link" href="@controllers.routes.ApplicationController.signOut">@messages("sign.out")</a></li>
-                        }.getOrElse {
-                            <li class="nav-item"><a class="nav-link" href="@controllers.routes.SignInController.view">@messages("sign.in")</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@controllers.routes.SignUpController.view">@messages("sign.up")</a></li>
-                        }
+                    @user.map { u =>
+                    <li class="nav-item"><a class="nav-link" href="@controllers.routes.ApplicationController.index">@u.name</a></li>
+                    @if(u.loginInfo.providerID == com.mohiva.play.silhouette.impl.providers.CredentialsProvider.ID) {
+                        <li class="nav-item"><a class="nav-link" href="@controllers.routes.ChangePasswordController.view">@messages("change.password")</a></li>
+                    }
+                    <li class="nav-item"><a class="nav-link" href="@controllers.routes.ApplicationController.signOut">@messages("sign.out")</a></li>
+                    }.getOrElse {
+                        <li class="nav-item"><a class="nav-link" href="@controllers.routes.SignInController.view">@messages("sign.in")</a></li>
+                        <li class="nav-item"><a class="nav-link" href="@controllers.routes.SignUpController.view">@messages("sign.up")</a></li>
+                    }
                     </ul>
                 </div>
             </nav>
@@ -81,7 +81,7 @@
                 }
             </div>
             <div class="starter-template row col text-center justify-content-center align-self-center" id="content">
-                @content
+            @content
             </div>
         </main>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -90,6 +90,5 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.2.0/zxcvbn.js"></script>
         <script src="@assets.path("javascripts/zxcvbnShim.js")"></script>
         <script type="text/javascript" src="@assets.path("javascripts/sw.js")"></script>
-        <script src="@assets.path("javascripts/drag-drop-touch.js")"></script>
     </body>
 </html>
