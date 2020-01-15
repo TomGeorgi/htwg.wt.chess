@@ -1,0 +1,346 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Realzeitsysteme</title>
+
+		<meta name="author" content="Tom Georgi">
+
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/monokai.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>Web Technologien</h1>
+					<hr/>
+					<h2>Web Chess</h2>
+					<p>
+						<small>Created by <a href="https://github.com/TomGeorgi">Tom Georgi</a> and <a href="https://github.com/Flobolo">Florian Djokaj</a></small>
+					</p>
+				</section>
+				<section>
+					<h2>
+						Gliederung
+					</h2>
+					<ul>
+						<li class="fragment">Play Server</li>
+						<li class="fragment">HTML / CSS / Bootstrap</li>
+						<li class="fragment">Javascript</li>
+						<li class="fragment">jQuery & Ajax</li>
+						<li class="fragment">WebSockets</li>
+						<li class="fragment">Polymer</li>
+						<li class="fragment">Vue.js</li>
+						<li class="fragment">PWA</li>
+						<li class="fragment">Authentication</li>
+						<li class="fragment">Deployment - Heroku</li>
+					</ul>
+				</section>
+				<section>
+					<section>
+						<h2>Play Server</h2>
+						<hr/>
+					</section>
+					<section>
+						<h2>Play Server</h2>
+						<hr/>
+						
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Struktur</h2>
+						<hr/>
+					</section>
+					<section data-background="#ffffff">
+						<!-- <h2>Struktur</h2> -->
+						<!-- <hr/> -->
+						<img src="pictures/Structure_Diagram.png" alt="Structure">
+					</section>
+					<section>
+						<img src="pictures/gpio_control.png" align="left"/>
+						<h4>GPIO Module</h4>
+						<br>
+						<ul>
+							<li><small>Steuert Pins vom User Space aus (sysfs)</small></li>
+							<!-- <li><small>Sollen Aufgaben übernehmen um die Bearbeitung/Verarbeitung im User Space zu erleichtern</small></li> -->
+							<li><small>Genutzt für Lichtschranken & Infrarot Sensoren</small></li>
+						</ul>
+					</section>
+					<section>
+						<img src="pictures/drivers.png" align="left"/>
+						<h4>Kernel Module</h4>
+						<br>
+						<ul>
+							<li><small>Laufen im  Kernel Space</small></li>
+							<!-- <li><small>Sollen Aufgaben übernehmen um die Bearbeitung/Verarbeitung im User Space zu erleichtern</small></li> -->
+							<li><small>Entfernung Messen (Ultrasonic)</small></li>
+							<li><small>Software PWM Signal</small></li>
+							<li><small>Interrupt Signal via IRQ</small></li>
+							<li><small>Motor Steuerung</small></li>
+						</ul>
+					</section>
+					<section>
+							<img src="pictures/global_uses.png" align="left"/>
+							<h4>Global Uses</h4>
+							<br>
+							<ul>
+								<li><small>read() & write() Funktionen</small>
+								<li><small>Thread Safe</small></li>
+								<li><small>Funktion zum öffnen/schließen der Kernel Module</small></li>
+								<li><small>Definiert Statische Prioritäten</small></li>
+								<li><small>Definiert aus dem User Space aufgerufene GPIO Pins </small></li>
+							</ul>
+					</section>
+					<section>
+						<img src="pictures/rfid_module.png" align="left"/>
+						<h4>RFID Sensor</h4>
+						<br>
+						<ul>
+							<li><small>Wird zum Ansteuern des RFID Sensors genutzt</small></li>
+							<li><small>externe rc522 library</small></li>
+							<li><small>Genutztes Modul: BCM2835</small></li>
+							<li><small>Liest RFID Tags ein</small></li>
+							<li><small>Wählt laufenden Process aus</small></li>
+						</ul>
+					</section>
+					<section>
+						<img src="pictures/control_modules.png" align="left"/>
+						<h4>Control Module</h4>
+						<br>
+						<ul>
+							<li><small>Pro CPU ein Thread</small></li>
+							<!-- <li><small>Sollen Aufgaben übernehmen um die Bearbeitung/Verarbeitung im User Space zu erleichtern</small></li> -->
+							<li><small>RT Scheduler: Round Robin (RR)</small></li>
+							<li><small>Priority: 99</small></li>
+							<li><small>Beinhalten Algorithmen zum steuern des Autos</small></li>
+						</ul>
+					</section>
+					<section>
+						<img src="pictures/processes.png" align="left"/>
+						<h4>Main & Process Module</h4>
+						<br>
+						<ul>
+							<li><small>drive_task beinhaltet main()</small></li>
+							<!-- <li><small>Sollen Aufgaben übernehmen um die Bearbeitung/Verarbeitung im User Space zu erleichtern</small></li> -->
+							<li><small>initialisiert signal Handler</small></li>
+							<li><small>öffnet Kernel Module über global uses</small></li>
+							<li><small>Steuert Laufende Prozesse (Parcour Aufgaben)</small></li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h3>Inter-Thread Kommunikation</h3>
+						<hr/>
+					</section>
+					<section>
+						<h3>Inter-Thread Kommunikation</h3>
+						<hr/>
+						<ul>
+							<li><small>1 Prozess, 4 Threads</small></li>
+							<li><small>Locks für Read und Writesr</small></li>
+						</ul>
+						<img src="pictures/Locks.png" align="center"/>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h3>Hinreichender Realzeitnachweis</h3>
+						<hr/>
+					</section>
+					<section>
+						<h3>Realzeitnachweis (Hinreichend)</h3>
+						<hr/>
+						<table>
+							<thead>
+								<tr>
+									<th>Task</th>
+									<th>T(P_min)</th>
+									<th>T(E_max)</th>
+									<th>T(D_max)</th>
+									<th>Auslastung</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><small>RFID</small></td>
+									<td>50 ms</td>
+									<td>25 ms</td>
+									<td>50 ms</td>
+									<td>50 %</td>
+								</tr>
+								<tr>
+									<td><small>PWM (Speed)</small></td>
+									<td>11 ms</td>
+									<td>9 ms</td>
+									<td>11 ms</td>
+									<td>81 %</td>
+								</tr>
+								<tr>
+									<td><small>Count Lines</small></td>
+									<td>40 ms</td>
+									<td>1 ms</td>
+									<td>40 ms</td>
+									<td>2,5 %</td>
+								</tr>
+								<tr>
+									<td><small>Follow Line</small></td>
+									<td>80 ms</td>
+									<td>25 ms</td>
+									<td>80 ms</td>
+									<td>31,25 %</td>
+								</tr>
+								<tr>
+									<td><small>Follow Wall</small></td>
+									<td>200 ms</td>
+									<td>180 ms</td>
+									<td>200 ms</td>
+									<td>90 %</td>
+								</tr>
+							</tbody>
+						</table>
+					</section>
+					<section>
+						<h3>Realzeitnachweis (Hinreichend)</h3>
+						<hr/>
+						Gesamtauslastung RFID => 50 %<br>
+						Gesamtauslastung Count Ticks + PWM => 2,5 % + 81 % => 83,5 % <br>
+						Gesamtauslastung Follow_Line => 31,25 % <br>
+						Gesamtauslastung Follow Wall => 90 %<br>
+					</section>
+					<section>
+						<h3>Realzeitnachweis (mit Last)</h3>
+						<hr/>
+						<table>
+							<thead>
+								<tr>
+									<th><small>Task</small></th>
+									<th><small>T(P_min)</small></th>
+									<th><small>T(E_max) (CPU / EA)</small></th>
+									<th><small>T(D_max)</small></th>
+									<th><small>Auslastung</small></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><small>RFID</small></td>
+									<td><small>50 ms</small></td>
+									<td><small>27 ms / 26 ms</small></td>
+									<td><small>50 ms</small></td>
+									<td><small>54 % / 52 %</small></td>
+								</tr>
+								<tr>
+									<td><small>PWM (Speed)</small></td>
+									<td><small>11 ms</small></td>
+									<td><small>9 ms / 9,1 ms</small></td>
+									<td><small>11 ms</small></td>
+									<td><small>81 % / 82 %</small></td>
+								</tr>
+								<tr>
+									<td><small>Count Lines</small></td>
+									<td><small>40 ms</small></td>
+									<td><small>1,9 ms / 1,4 ms</small></td>
+									<td><small>40 ms</small></td>
+									<td><small>4,75 % / 3,5 %</small></td>
+								</tr>
+								<tr>
+									<td><small>Follow Line</small></td>
+									<td><small>80 ms</small></td>
+									<td><small>45 ms / 1,2 s</small></td>
+									<td><small>80 ms</small></td>
+									<td><small>56,25 % / 1500 %</small></td>
+								</tr>
+								<tr>
+									<td><small>Follow Wall</small></td>
+									<td><small>200 ms</small></td>
+									<td><small>180 ms / 176 ms</small></td>
+									<td><small>200 ms</small></td>
+									<td><small>90 % / 88 %</small></td>
+								</tr>
+							</tbody>
+						</table>
+					</section>
+				</section>
+				<!-- <section>
+					<section>
+						<h3>Notwendiger Realzeitnachweis</h3>
+						<hr/>
+					</section>
+				</section> -->
+				<section>
+					<section>
+						<h2>Probleme & Verbesserung</h2>
+						<hr/>
+					</section>
+					<section>
+						<h2>Probleme</h2>
+						<hr/>
+						<br>
+						<ul>
+							<li><small>Buildroot</small></li>
+							<li><small>Timing Probleme</small></li>
+							<li><small>Falsches Zeitmessen</small></li>
+							<li><small>Aufteilung</small></li>
+						</ul>
+					</section>
+					<section>
+						<h2>(Mögliche) Verbesserungen</h2>
+						<hr/>
+						<br>
+						<ul>
+							<li><small>Andere herangehensweise</small></li>
+							<li><small>Früher Gedanken über Zeiten machen</small></li>
+							<li><small>Extremere Aufteilung der Aufgaben</small></li>
+							<li><small>Zeiten durch früheres nachweisen korrigieren</small></li>
+							<li><small>Hardware PWM</small></li>
+							<li><small>(Rust ?)</small></li>
+						</ul>
+					</section>
+					<section>
+						<h2>Fazit</h2>
+						<hr/>
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<h1>THE END</h1>
+					<p> 
+						- Fragen ? <br>
+					</p>
+				</section>
+			</div>
+		</div>
+
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true }
+				]
+			});
+		</script>
+	</body>
+</html>
