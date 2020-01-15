@@ -3,11 +3,11 @@ package controllers
 import javax.inject._
 import play.api.mvc._
 import de.htwg.se.Chess.Chess
-import de.htwg.se.Chess.controller.controllerComponent.{GameStatus, Played}
+import de.htwg.se.Chess.controller.controllerComponent.{ GameStatus, Played }
 import de.htwg.se.Chess.model.figureComponent.Color
 import de.htwg.se.Chess.model.playerComponent.PlayerInterface
 import de.htwg.se.Chess.model.playerComponent.playerBaseImpl.Player
-import play.api.libs.json.{JsString, JsValue, Json}
+import play.api.libs.json.{ JsString, JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import akka.actor.ActorSystem
 import akka.stream.Materializer
@@ -18,7 +18,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import scala.swing.Reactor
 
 @Singleton
-class ChessController @Inject()(cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer, ec: ExecutionContext) extends AbstractController(cc) {
+class ChessController @Inject() (cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer, ec: ExecutionContext) extends AbstractController(cc) {
   val gameController = Chess.controller
 
   def message = GameStatus.message(gameController.gameStatus)
@@ -48,9 +48,7 @@ class ChessController @Inject()(cc: ControllerComponents)(implicit system: Actor
   }
 
   def turn(row: Int, col: Int, row2: Int, col2: Int) = Action {
-    print(row, col, row2, col2)
     gameController.turn(row, col, row2, col2)
-    print(chessAsText)
     Ok(gameController.gridToJson)
   }
 
@@ -65,7 +63,7 @@ class ChessController @Inject()(cc: ControllerComponents)(implicit system: Actor
   }
 
   def new_game(playerOne: String, playerTwo: String) = Action {
-    gameController.createNewGrid(playerOne, playerTwo)
+    gameController.createNewGrid((playerOne, playerTwo))
     Ok(gameController.gridToJson)
   }
 
