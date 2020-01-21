@@ -643,6 +643,25 @@
 						<p>Config Variable zu Heroku hinzufügen</p>
 						<img src="pic/heroku_secret.png">
 					</section>
+					<section>
+						<h2>Wichtig!</h2>
+						<hr/>
+						<p>People API aktivieren</p>
+						<img src="pic/people_api_screenshot.png">
+						<p>Fehler verfolgen und fixen durch:</p>
+						<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs sh" style="word-wrap: break-word;" data-trim>
+							$ heroku logs -a htwg-web-chess
+						</code></pre>
+						<p>People API aktivieren</p>
+						<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs sh" style="word-wrap: break-word;" data-trim>
+							$ 2020-01-21T22:00:54.025572+00:00 app[web.1]: com.mohiva.play.silhouette.impl.exceptions.ProfileRetrievalException: 
+								[Silhouette][google] Error retrieving profile information. Error code: 403, message: People API has not been used in 
+								project 683210386650 before or it is disabled. Enable it by visiting 
+								https://console.developers.google.com/apis/api/people.googleapis.com/overview?project=683210386650 then retry. 
+								If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+							$ 
+						</code></pre>
+					</section>
 				</section>
 				<section style="text-align: left;" data-background="pic/questions.gif">
 					<h1>THE END</h1>
