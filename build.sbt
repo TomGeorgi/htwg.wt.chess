@@ -1,15 +1,88 @@
-name := """Chess in Scala for WebTech"""
+import com.typesafe.sbt.SbtScalariform._
 
-version := "1.2"
+import scalariform.formatter.preferences._
 
-lazy val root = (project in file (".")).enablePlugins(PlayScala)
+name := "htwg-web-chess"
 
-scalaVersion := "2.12.7"
+herokuAppName in Compile := "htwg-web-chess"
 
-libraryDependencies += guice
+herokuJdkVersion in Compile := "11"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
+version := "1.8.0"
 
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
+scalaVersion := "2.12.8"
 
-libraryDependencies += "com.h2database" % "h2" % "1.4.196"
+resolvers += Resolver.jcenterRepo
+
+resolvers += "Sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
+
+libraryDependencies ++= Seq(
+  "com.mohiva" %% "play-silhouette" % "6.1.0",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "6.1.0",
+  "com.mohiva" %% "play-silhouette-persistence" % "6.1.0",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "6.1.0",
+  "com.mohiva" %% "play-silhouette-totp" % "6.1.0",
+  "org.webjars" %% "webjars-play" % "2.7.0",
+  "org.webjars" % "bootstrap" % "4.1.0" exclude("org.webjars", "jquery"),
+  "org.webjars" % "jquery" % "3.2.1",
+  "net.codingwell" %% "scala-guice" % "4.1.0",
+  "com.iheart" %% "ficus" % "1.4.3",
+  "com.typesafe.play" %% "play-mailer" % "7.0.0",
+  "com.typesafe.play" %% "play-mailer-guice" % "7.0.0",
+  "com.enragedginger" %% "akka-quartz-scheduler" % "1.6.1-akka-2.5.x",
+  "com.adrianhurt" %% "play-bootstrap" % "1.5-P27-B3-SNAPSHOT",
+  "com.mohiva" %% "play-silhouette-testkit" % "6.1.0" % "test",
+  specs2 % Test,
+  ehcache,
+  guice,
+  filters
+)
+
+lazy val root = (project in file(".")).enablePlugins(PlayScala, SbtWeb, SbtVuefy).aggregate(chessLib).dependsOn(chessLib)
+lazy val chessLib = project
+
+routesImport += "utils.route.Binders._"
+
+// https://github.com/playframework/twirl/issues/105
+TwirlKeys.templateImports := Seq()
+
+scalacOptions ++= Seq(
+  "-deprecation", // Emit warning and location for usages of deprecated APIs.
+  "-feature", // Emit warning and location for usages of features that should be imported explicitly.
+  "-unchecked", // Enable additional warnings where generated code depends on assumptions.
+  "-Xfatal-warnings", // Fail the compilation if there are any warnings.
+  //"-Xlint", // Enable recommended additional warnings.
+  "-Ywarn-adapted-args", // Warn if an argument list is modified to match the receiver.
+  "-Ywarn-dead-code", // Warn when dead code is identified.
+  "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures.
+  "-Ywarn-nullary-override", // Warn when non-nullary overrides nullary, e.g. def foo() over def foo.
+  "-Ywarn-numeric-widen", // Warn when numerics are widened.
+  // Play has a lot of issues with unused imports and unsued params
+  // https://github.com/playframework/playframework/issues/6690
+  // https://github.com/playframework/twirl/issues/105
+  "-Xlint:-unused,_"
+)
+
+//********************************************************
+// Scalariform settings
+//********************************************************
+
+scalariformAutoformat := true
+
+ScalariformKeys.preferences := ScalariformKeys.preferences.value
+  .setPreference(FormatXml, false)
+  .setPreference(DoubleIndentConstructorArguments, false)
+  .setPreference(DanglingCloseParenthesis, Preserve)
+
+// The commands that triggers production build when running Webpack, as in `webpack -p`.
+Assets / VueKeys.vuefy / VueKeys.prodCommands := Set("stage")
+
+// The location of the webpack binary. For windows, it might be `webpack.cmd`.
+Assets / VueKeys.vuefy / VueKeys.webpackBinary := "./node_modules/.bin/webpack"
+
+// The location of the webpack configuration.
+Assets / VueKeys.vuefy / VueKeys.webpackConfig := "./webpack.config.js"
+
+unmanagedResourceDirectories in Assets += baseDirectory.value / "public/node_modules"
+
+Assets / VueKeys.vuefy / excludeFilter := "_*"

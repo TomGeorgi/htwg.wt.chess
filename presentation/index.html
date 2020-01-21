@@ -1,0 +1,672 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Web Technologien</title>
+
+		<meta name="author" content="Tom Georgi & Florian Djokaj">
+
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/monokai.css">
+
+		<!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">-->
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>Web Technologien</h1>
+					<hr/>
+					<h2>Web Chess</h2>
+					<p>
+						<small>Created by <a href="https://github.com/TomGeorgi">Tom Georgi</a> and <a href="https://github.com/Flobolo">Florian Djokaj</a></small>
+					</p>
+				</section>
+				<section>
+					<h2>
+						Gliederung
+					</h2>
+					<ul>
+						<li class="fragment">Play Server</li>
+						<li class="fragment">HTML / CSS / Bootstrap</li>
+						<li class="fragment">Javascript</li>
+						<li class="fragment">jQuery & Ajax</li>
+						<li class="fragment">WebSockets</li>
+						<li class="fragment">Polymer</li>
+						<li class="fragment">Vue.js</li>
+						<li class="fragment">PWA</li>
+						<li class="fragment">Authentication</li>
+						<li class="fragment">Deployment - Heroku</li>
+					</ul>
+				</section>
+				<section>
+					<section>
+						<img src="pic/playserverLogo.png" alt="playServerLogo" style="width: 50%;">
+						<hr/>
+					</section>
+					<section>
+						<h2>Struktur</h2>
+						<hr/>
+						<div style="display: inline-block; width: 60%;">
+							<ul style="font-size: 75%;">
+								<li>controllers -> Bearbeiten von Request</li>
+								<li>views -> html Seiten</li>
+								<li>conf -> Server configs</li>
+								<li>lib -> Spiel</li>
+								<li>public -> js / css / img / etc.</li>
+							</ul>
+						</div>
+						<div class="mybox" style="display: inline-block; width: 35%; vertical-align: top">
+							<img src="pic/playStruc.PNG" alt="playStruc">
+						</div>
+						<aside class="notes">
+							- Aufbau 
+						</aside>
+					</section>
+					<section>	
+						<section>
+							<h2>Routes</h2>
+							<pre style="font-size: medium;"><code class="hljs" data-trim data-line-numbers="1-5,8">								
+								GET     /                           controllers.ChessController.chess
+								GET     /about                      controllers.ChessController.about
+								GET     /set/:row/:col/:row2/:col2  controllers.ChessController.set(row:Int,col:Int, row2:Int,col2:Int)
+								GET     /undo                       controllers.ChessController.undo
+								GET     /redo                       controllers.ChessController.redo
+
+								# Map static resources from the /public folder to the /assets URL path
+								GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+							</code></pre>
+							<h2>Filters</h2>
+							<pre><code class="hljs" data-trim>
+								play.filters {
+									hosts {
+										allowed = ["localhost:9000"]
+									}
+								}
+							</code></pre>
+							<aside class="notes">
+								- routen liegen im 'routes'-file
+								- werden vom play server genutzt
+								- filters werden genutzt um die Sicherheit des Servers einzustellen. 
+								- Am Anfang nur localhost erlaubt.
+								- Im späteren verlauf auch heroku. 
+							</aside>
+						</section>
+		
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>HTML / CSS / Bootstrap</h2>
+						<hr/>
+						<img src="pic/htmlLogo.png" alt="html Logo" style="height: 200px; background: #ffffff;">
+						<img src="pic/CSSLogo.png" alt="css Logo" style="height: 200px; background: #ffffff;">
+						<img src="pic/BootstrapLogo.png" alt="BootstrapLogo" style="height: 200px; background: #ffffff;">
+					</section>
+					<section>
+						<h2>HTML</h2>
+						<hr/>
+						<pre style="font-size: medium;"><code class="hljs" data-trim >
+							<div id="game" class="game">
+							  @for(row <- 0 until size) {
+								<div class="c-row">
+								  <span class="number">
+									@(size - row)
+							  	  </span>
+								  @for(col <- 0 until size) {
+									<div id="square-@(row)-@(col)" class="noselect">
+									  <div class="piece">
+										@if(!controller.grid.cell(row, col).isSet) {
+										  <div class="clear"></div>
+										}
+									  </div>
+									</div>
+								  }
+								</div>
+								<div class="clear"></div>
+							  }
+							  <span class="empty"> </span>
+							  @for(letter <- 'A' to 'H') {
+								<span class="letter" id="letter-@(letter)">@(letter)</span>
+							  }
+							</div>
+						</code></pre>								
+					</section>
+					<section>
+						<h2>CSS</h2>
+						<hr/>
+						<pre style="width: auto;"><code class="hljs" data-trim>
+							.game-container-3d {
+							  transition: .5s;
+							  position: relative;
+							  top: 6.5em;
+							  left: 7em;
+							  transform: translate(-50%, -50%) rotate(330deg) skew(25deg);
+							}
+						</code></pre>
+					</section>
+					<section>
+						<h2>Bootstrap</h2>
+						<hr/>
+						<pre style="font-size: medium;"><code class="hljs html" style="word-wrap: break-word;" data-trim>
+							<div class="col-md-5" id="notification" style="top: 10px; left: 10px">
+							  @if(controller.gameStatus == NEXT_PLAYER) {
+								<div id="message-box" class="alert alert-primary" role="alert">
+								  @controller.playerAtTurnToString @message
+								</div>
+							  } else if(controller.gameStatus == CHECK_MATE) {
+								<div id="message-box" class="alert alert-danger" role="alert">
+								  @controller.playerNotAtTurnToString @message
+								</div>
+							  } else if(controller.gameStatus == MOVE_NOT_VALID)  {
+								<div id="message-box" class="alert alert-danger" role="alert">
+								  @controller.playerAtTurn @message
+								</div>
+							  } else {
+								<div id="message-box" class="alert alert-warning" role="alert">
+								  @controller.playerAtTurnToString @message
+								</div>
+							  }
+							</div>
+						</code></pre>
+						<aside class="notes">
+							- Bootstrap momentan in der Version 4
+							- entwickelt von Twitter
+							- Responsive Design
+						</aside>
+					</section>
+					<section>
+						<h2>Ergbnis</h2>
+						<hr/>
+						<img src="pic/handy2.jpeg" style="max-height: 500px;">
+						<img src="pic/flatboard.png" style="height: 500px;">
+					</section>
+				</section>
+				<section>
+					<!--<section  data-background="pic/JSLogo.png" data-background-repeat="repeat" data-background-size="100px">-->
+					<section>
+						<h2>Javascript</h2>
+						<hr/>
+						<img src="pic/JSLogo.png" style="height: 300px; background: white;">
+					</section>
+					<section>
+						<h2>Realisierung</h2>
+						<hr/>
+						<div style="display: inline-block; width: 49%; vertical-align:top">
+							<p style="padding-left:25px">Events</p>
+							<ul>
+								<li>Click Event</li>
+								<li>Hover Event</li>
+								<li>Felder Animation</li>
+								<li>Board Setup</li>
+								<li>Aktualisierung von Spiel Informationen</li>
+							</ul>
+						</div>
+	
+						<div style="display: inline-block; width: 49%; vertical-align:top">
+							<p>Ergebnis</p>
+							<div class="mybox" style="width: 100%">
+								<img src="pic/JS-Functionality.png">	
+							</div>
+						</div>
+					</section>
+					<section>
+						<h2>Click Listener Pseudo Code</h2>
+						<hr/>
+						<pre style="font-size: medium;"><code class="hljs js" style="word-wrap: break-word;" data-trim>
+							function registerClickListener() {
+							  for (let row = 0; row < grid.size; row++) {
+								for (let col = 0; col < grid.size; col++) {
+								  let id = "square-" + row.toString() + "-" + col.toString();
+								  $(document.getElementById(id)).click(function () {
+									if (Piece not selected and Square not empty) {
+									  addClass('selected');
+									  moves = getPossibleMoves();
+									  for (mov in moves)
+										highlight;
+									} else {
+									  removeClass('selected');
+									  if (Piece selected)
+										doTurn(...);
+									}
+								  });
+								}
+							  }
+							}
+						</code></pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>jQuery & AJAX</h2>
+						<hr/>
+						<dev style="display: inline-block; width: 49%; vertical-align: top;">
+							<img src="pic/jQueryLogo.png" style="height: 300px; background: white;">
+						</dev>
+						<dev style="display: inline-block; width: 49%; vertical-align: top;">
+							<img src="pic/AJAXLogo.png" style="height: 300px; background: white;">
+						</dev>
+					</section>
+					<section>
+						<h2>Wie AJAX & jQuery funktionieren</h2>
+						<hr/>
+						<dev style="display: inline-block; width: 100%; vertical-align: top;">
+							<img src="pic/ajax-diagramm.jpg" style="background: white;">
+						</dev>
+					</section>
+					<section>
+						<h2>Anwendungsbeispiel von AJAX und jQuery</h2> 
+						<hr/>
+						
+						<pre style="font-size: medium;"><code class="hljs js" style="word-wrap: break-word;" data-trim>
+							function updateBoard(grid) {
+								for (let row = 0; row < grid.size; row++) {
+									for (let col = 0; col < grid.size; col++) {
+										let html = "<div class='piece'>" + grid.cells[row][col].toString() + "</div>";
+										$("#square-" + row + "-" + col).html(html);
+									}
+								}
+							}
+						</code></pre>
+						<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs js" style="word-wrap: break-word;" data-trim>
+							function new() {
+								...	
+								$.ajax({
+									method: "GET",
+									url: "/new/" + playerOne.toString() + "/" + playerTwo.toString(),
+									dataType: "json",
+									async: false,
+							
+									success: function (result) {
+										grid.fill(result.grid.cells);
+										updateBoard(grid);
+										updateGameStatus();
+									}
+								});
+								...
+							}
+						</code></pre>
+						
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>WebSockets</h2>
+						<hr/>
+						<dev style="display: inline-block; width: 100%; vertical-align: top;">
+							<img src="pic/js-websocket-logo.png" style="background: white;">
+						</dev>
+					</section>
+					<section>
+						<h2>WebSockets im Browser</h2>
+						<hr/>
+						<div style="display: inline-block; width: 49%; vertical-align:top;">
+							<p>Funktionen</p>
+							<div class="mybox" style="width: 100%">
+								<ul>
+									<li>onopen</li>
+									<li>onclose</li>
+									<li>onerror</li>
+									<li>onmessage</li>
+								</ul>
+							</div>
+						</div>
+						<div style="display: inline-block; width: 49%; vertical-align:top">
+							<p>Implementierung</p>
+							<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs js" style="word-wrap: break-word;" data-trim>
+								websocket.onmessage = function (e) {
+									if (typeof e.data === "string") {
+										let json = JSON.parse(e.data);
+										let cells = json.grid.cells;
+										grid.fill(cells);
+										updateBoard(grid);
+										updateGameStatus();
+									}
+								}
+							</code></pre>
+						</div>
+					</section>
+					<section>
+						<h2>Socket in Scala</h2>
+						<hr/>
+						<div style="display: inline-block; width: 49%; vertical-align: top;">
+							<p>Anbindung im JS Script</p>
+							<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs js" style="word-wrap: break-word;" data-trim>
+								&#32;var HOST = location.origin.replace(/^http/, 'ws');
+								&#32;var websocket = new WebSocket(HOST + "/websocket");
+							</code></pre>
+						</div>
+						<div style="display: inline-block; width: 49%; vertical-align: top;">
+							<p>GET Route</p>
+							<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs" style="word-wrap: break-word;" data-trim>
+								GET	   /websocket    controllers.ChessController.socket
+							</code></pre>
+						</div>
+						<div style="display: inline-block; width: 100%; vertical-align: top;">
+							<p>Scala WebSocket</p>
+							<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs scala" style="word-wrap: break-word;" data-trim>
+								def receive = {
+									case msg: String =>
+									  participants += user.fullName.get -> out
+									  sendJsonToClient()
+								}
+							  
+								reactions += {
+									case _: Played => sendJsonToClient()
+								}
+
+								def sendJsonToClient() = {
+									println("Received event from Controller")
+									participants.values.foreach(_ ! gameController.gridToJson.toString())
+								}
+							</code></pre>
+						</div>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Polymer</h2>
+						<hr/>
+						<dev style="display: inline-block; width: 100%; vertical-align: top;">
+							<img src="pic/PolymerLogo.png" style="background: white;">
+						</dev>
+					</section>
+					<section>
+						<h2>Polymer Installieren</h2>
+						<hr/>
+						<div style="display: inline-block; width: 49%; vertical-align: top;">
+							<img src="pic/PolymerLogo.png" style="background: white;">
+						</div>
+						<div style="display: inline-block; width: 49%; vertical-align:top;">
+							<p>Commands</p>
+							<div class="mybox" style="width: 100%">
+								<ul>
+									<li>npm i bower</li>
+									<li>npm i lit-element</li>
+									<li>npm i polymer-cli</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h2>Polymer nutzen</h2>
+						<hr/>
+						<pre style="font-size: medium; tab-size: 2; -moc-tab-size: 2;"><code class="hljs js" style="word-wrap: break-word;" data-trim>
+							import {LitElement, html, css} from "https://unpkg.com/@polymer/lit-element@latest/lit-element.js?module";
+						</code></pre>
+						<div style="display: inline-block; width: 29%; vertical-align: top;">
+							<p style="font-size: medium;">Erstellen eines LitElements</p>
+							<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs js" style="word-wrap: break-word;" data-trim>
+								class LetterElement 
+									extends LitElement {
+
+									static get properties() {
+										return {
+											id: { type: Number },
+											class: { type: String },
+											cols: { type: Array },
+										}
+									}
+								
+									constructor() {
+										super();
+										this.letters = ['A', 'B', 
+														'C', 'D', 
+														'E', 'F', 
+														'G', 'H'];
+									}
+								}
+							</code></pre>
+						</div>
+						<div style="display: inline-block; width: 70%; vertical-align:top;">
+							<p style="font-size: medium;">render() Funktion</p>
+							<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs html" style="word-wrap: break-word;" data-trim>
+								render() {
+									return html`
+									  ...
+										${this.rows.map(row => html`
+										<div class="c-row">
+											<number-element id="${row}"></number-element>
+											${this.cols.map(col => html`
+											${(row + col) % 2 !== 0 ? 
+												html`<div id="square-${row}-${col}" class="noselect square-white"></div>`: 
+												html`<div id="square-${row}-${col}" class="noselect square-black"></div>`
+											}
+											`)}
+										</div>
+										<div class="clear"></div>
+										`)}
+										<span class="empty"> </span>
+										<letter-element></letter-element>
+										...
+									`;
+								}
+							</code></pre>
+						</div>
+						<div style="display: inline-block; width: 49%; vertical-align: top;">
+							<p style="font-size: medium;">define customElement</p>
+							<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs" style="word-wrap: break-word;" data-trim>
+								customElements.define('chess-app', ChessApp);
+							</code></pre>
+						</div>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Vue.js</h2>
+						<hr/>
+						<dev style="display: inline-block; width: 100%; vertical-align: top;">
+							<img src="pic/vuejsLogo.png">
+						</dev>
+					</section>
+					<section>
+						<h2>Vue.js sbt Pluging</h2>
+						<hr/>
+						<div style="display: inline-block; width: 24%; vertical-align: top;">
+							<img src="pic/vuejsLogo.png" style="background: white;">
+						</div>
+						<div style="display: inline-block; width: 74%; vertical-align:top;">
+							<div class="mybox" style="width: 100%">
+								<ul>
+									<li>Generierung über vuefy sbt plugin</li>
+									<li>Sucht im Ordner 'assets' nach</li>
+									<li>Generiert *.js file</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h2>Vue File</h2>
+						<hr/>
+						<div style="display: inline-block; width: 70%; vertical-align:top;">
+							<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs" style="word-wrap: break-word;" data-trim>
+								<template>
+									<div class="chess-app">
+										<game></game>
+									</div>
+								</template>
+								
+								<script lang="ts">
+								import Vue from 'vue';
+								Vue.component('game', require('./common/_game.vue').default);
+								export default Vue.extend({});
+								</script>
+								
+								<style scoped lang="scss">
+								.greeting-form {
+									display: block;
+									text-align: center;
+									padding: 25px 0px;
+								}
+								</style>
+							</code></pre>
+						</div>	
+					</section>
+					<section>
+						<h2>Game Template</h2>
+						<hr/>
+						<div style="display: inline-block; width: 100%; vertical-align:top;">
+							<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs vuejs" style="word-wrap: break-word;" data-trim>
+								<template>
+									<div class="game-container">
+										<div class="game">
+											<div v-for="row in rows" class="c-row" :key="row">
+												<span class="number">
+													{{ size - row }}
+												</span>
+												<div v-for="col in cols" :key="col" 
+												:id="'square-' + row + '-' + col" class="noselect">
+													<slot></slot>
+													<div class="clear"></div>
+												</div>
+											</div>
+											<div class="clear"></div>
+											<letter-box></letter-box>
+										</div>
+									</div>
+								</template>
+							</code></pre>
+						</div>	
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>PWA - Progressive Web App</h2>
+						<hr/>
+						<dev style="display: inline-block; width: 49%; vertical-align: top;">
+							<img src="pic/pwaLogo.png">
+						</dev>
+					</section>
+					<section>
+						<h2>Vorgehensweise</h2>
+						<hr/>
+						<div style="display: inline-block; width: 24%; vertical-align: top;">
+							<img src="pic/pwaLogo.png" style="background: white;">
+						</div>
+						<div style="display: inline-block; width: 74%; vertical-align:top;">
+							<div class="mybox" style="width: 100%">
+								<ul>
+									<li>Anlegen einer manifest.json</li>
+									<li>'routes'-Datei updaten</li>
+									<li>service-worker hinzufügen</li>
+								</ul>
+							</div>
+						</div>
+						<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs vuejs" style="word-wrap: break-word;" data-trim>
+							GET     /service-worker.js      controllers.Assets.at(path="/public", file="javascripts/service-worker.js")
+							GET     /manifest.json          controllers.Assets.at(path="/public", file="manifest.json")
+							GET     /sw.js                  controllers.Assets.at(path="/public", file="javascripts/sw.js")
+						</code></pre>
+					</section>
+					<section>
+						<h2>Beispiel Installation</h2>
+						<hr/>
+						<dev style="display: inline-block; width: 25%; vertical-align: top;">
+							<video>
+								<source src="pic/How_to_Install.mp4" type="video/mp4">
+							</video>
+						</dev>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Authentication</h2>
+						<hr/>
+						<dev style="display: inline-block; width: 49%; vertical-align: top;">
+							<img src="pic/silhouette.png">
+						</dev>
+					</section>
+					<section>
+						<h2>Aufbau</h2>
+						<hr/>
+						<div style="display: inline-block; width: 49%; vertical-align:top;">
+							<p>Login</p>
+							<img src="pic/login.png">
+						</div>
+						<div style="display: inline-block; width: 49%; vertical-align:top">
+							<p>Registrierung</p>
+							<img src="pic/signup.png">
+						</div>
+					</section>
+					<section>
+						<h2>Hinzufügen eines Playmailers</h2>
+						<hr/>
+						<div style="display: inline-block; width: 100%; vertical-align:top;">
+							<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs vuejs" style="word-wrap: break-word;" data-trim>
+								# Play mailer
+								play.mailer {
+									host = "smtp.gmail.com"
+									port = 465
+									ssl = yes
+									user = "noreply.web.chess@gmail.com"
+									password = "****"
+								}
+							</code></pre>
+						</div>	
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Deployment mit Heroku</h2>
+						<hr/>
+						<dev style="display: inline-block; size: 49%; vertical-align: top;">
+							<img src="pic/herokuLogo.png">
+						</dev>
+					</section>
+					<section>
+						<h2>Deployment mit Heroku</h2>
+						<hr/>
+						<p>Hinzufügen des Plugins</p>
+						<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs vuejs" style="word-wrap: break-word;" data-trim>
+							addSbtPlugin("com.heroku" % "sbt-heroku" % "2.1.2")
+						</code></pre>
+						<p>build.sbt erweitern</p>
+						<pre style="font-size: medium; tab-size: 2; -moz-tab-size: 2;"><code class="hljs vuejs" style="word-wrap: break-word;" data-trim>
+							herokuAppName in Compile := "htwg-web-chess"
+							herokuJdkVersion in Compile := "11"
+						</code></pre>
+						<p>Config Variable zu Heroku hinzufügen</p>
+						<img src="pic/heroku_secret.png">
+					</section>
+				</section>
+				<section style="text-align: left;" data-background="pic/questions.gif">
+					<h1>THE END</h1>
+					<p> 
+						- Fragen ? <br>
+					</p>
+				</section>
+			</div>
+		</div>
+
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true }
+				]
+			});
+		</script>
+	</body>
+</html>

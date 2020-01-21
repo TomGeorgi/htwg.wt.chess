@@ -1,22 +1,94 @@
-@*
-* This template is called from the `index` template. This template
-* handles the rendering of the page header and body tags. It takes
-* two arguments, a `String` for the title of the page and an `Html`
-* object to insert into the body of the page.
-*@
-@(title: String)(content: Html)
+@import play.api.i18n.Messages
+@import play.api.mvc.RequestHeader
+@import play.twirl.api.Html
+@import org.webjars.play.WebJarsUtil
+@import controllers.AssetsFinder
+
+@(title: String, user: Option[models.User] = None)(content: Html)(implicit request: RequestHeader, messages: Messages, assets: AssetsFinder, webJarsUtil: WebJarsUtil)
 
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        @* Here's where we render the page title `String`. *@
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" type="image/png" href="@assets.path("img/icons/chess_icon-16x16.png")">
         <title>@title</title>
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
+        <link href="//fonts.googleapis.com/css?family=Roboto|Montserrat:400,700|Open+Sans:400,300,600" rel="stylesheet">
+        <link href="//cdnjs.cloudflare.com/ajax/libs/ionicons/1.5.2/css/ionicons.min.css" rel="stylesheet">
+        @webJarsUtil.locate("bootstrap.min.css").css()
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <link rel="manifest" type="application/manifest+json" href="/manifest.json" crossorigin="use-credentials">
+        <link rel="stylesheet" href="@assets.path("styles/main.css")">
+            <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+            <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+            <![endif]-->
     </head>
     <body>
-        @* And here's where we render the `Html` object containing
-        * the page content. *@
-        @content
+        <header class="navbar-fixed-top" role="navigation">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="@controllers.routes.ApplicationController.index">Web Chess</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                    <ul class="navbar-nav mr-auto" id="left-items">
+                        <li class="nav-item">
+                            <a class="nav-link" href="@controllers.routes.ApplicationController.index">@messages("home")</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://github.com/TomGeorgi/htwg.wt.chess">GitHub</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                    <ul class="navbar-nav ml-auto">
+                    @user.map { u =>
+                    <li class="nav-item"><a class="nav-link" href="@controllers.routes.ApplicationController.index">@u.name</a></li>
+                    @if(u.loginInfo.providerID == com.mohiva.play.silhouette.impl.providers.CredentialsProvider.ID) {
+                        <li class="nav-item"><a class="nav-link" href="@controllers.routes.ChangePasswordController.view">@messages("change.password")</a></li>
+                    }
+                    <li class="nav-item"><a class="nav-link" href="@controllers.routes.ApplicationController.signOut">@messages("sign.out")</a></li>
+                    }.getOrElse {
+                        <li class="nav-item"><a class="nav-link" href="@controllers.routes.SignInController.view">@messages("sign.in")</a></li>
+                        <li class="nav-item"><a class="nav-link" href="@controllers.routes.SignUpController.view">@messages("sign.up")</a></li>
+                    }
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <main class="container">
+            <div class="starter-template row col text-center justify-content-center align-self-center" style="margin-top: 50px" id="request-box">
+                @request.flash.get("error").map { msg =>
+                    <div class="col-md-6 col-md-offset-3 alert alert-danger">
+                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+                        <strong>@messages("error")</strong> @msg
+                    </div>
+                }
+                @request.flash.get("info").map { msg =>
+                    <div class="col-md-6 col-md-offset-3 alert alert-info">
+                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+                        <strong>@messages("info")</strong> @msg
+                    </div>
+                }
+                @request.flash.get("success").map { msg =>
+                    <div class="col-md-6 col-md-offset-3 alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+                        <strong>@messages("success")</strong> @msg
+                    </div>
+                }
+            </div>
+            <div class="starter-template row col text-center justify-content-center align-self-center" id="content">
+            @content
+            </div>
+        </main>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.2.0/zxcvbn.js"></script>
+        <script src="@assets.path("javascripts/zxcvbnShim.js")"></script>
+        <script type="text/javascript" src="@assets.path("javascripts/sw.js")"></script>
     </body>
 </html>

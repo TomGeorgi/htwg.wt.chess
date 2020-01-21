@@ -2,17 +2,58 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Controller for Sudoku
+# Controller for Chess
 
-GET     /                           controllers.ChessController.chess
+GET         /chess                             controllers.ChessController.chess
+GET         /about                             controllers.ApplicationController.index
+GET         /turn/:row/:col/:row2/:col2        controllers.ChessController.turn(row: Int, col: Int, row2: Int, col2: Int)
+GET         /undo                              controllers.ChessController.undo
+GET         /redo                              controllers.ChessController.redo
+GET         /new/:playerOne/:playerTwo         controllers.ChessController.new_game(playerOne: String, playerTwo: String)
+GET         /playerAtTurn                      controllers.ChessController.playerAtTurn
+GET         /playerNotAtTurn                   controllers.ChessController.playerNotAtTurn
+GET         /message                           controllers.ChessController.getMessage
+GET         /gameStatus                        controllers.ChessController.getGameStatus
+GET         /possibleMove/:row/:col            controllers.ChessController.getPossibleMove(row: Int, col: Int)
+GET         /json                              controllers.ChessController.gridToJson
+GET         /websocket                         controllers.ChessController.socket
+GET         /vueChess                          controllers.ChessController.vueChess
+GET         /service-worker.js                 controllers.Assets.at(path="/public", file="javascripts/service-worker.js")
+GET         /manifest.json                     controllers.Assets.at(path="/public", file="manifest.json")
+GET         /sw.js                             controllers.Assets.at(path="/public", file="javascripts/sw.js")
+GET         /offline.html                      controllers.ChessController.offline
 
-GET     /about                      controllers.ChessController.about
+# Home page
+GET         /                                  controllers.ApplicationController.index
+GET         /signOut                           controllers.ApplicationController.signOut
+GET         /authenticate/:provider            controllers.SocialAuthController.authenticate(provider)
 
-GET     /set/:row/:col/:row2/:col2  controllers.ChessController.set(row:Int,col:Int, row2:Int,col2:Int)
+GET         /signUp                            controllers.SignUpController.view
+POST        /signUp                            controllers.SignUpController.submit
 
-GET     /undo                       controllers.ChessController.undo
+GET         /signIn                            controllers.SignInController.view
+POST        /signIn                            controllers.SignInController.submit
 
-GET     /redo                       controllers.ChessController.redo
+GET         /totp                              controllers.TotpController.view(userId: java.util.UUID, sharedKey: String, rememberMe: Boolean)
+GET         /enableTotp                        controllers.TotpController.enableTotp
+GET         /disableTotp                       controllers.TotpController.disableTotp
+POST        /totpSubmit                        controllers.TotpController.submit
+POST        /enableTotpSubmit                  controllers.TotpController.enableTotpSubmit
+
+GET         /totpRecovery                      controllers.TotpRecoveryController.view(userID: java.util.UUID, sharedKey: String, rememberMe: Boolean)
+POST        /totpRecoverySubmit                controllers.TotpRecoveryController.submit
+
+GET         /password/forgot                   controllers.ForgotPasswordController.view
+POST        /password/forgot                   controllers.ForgotPasswordController.submit
+GET         /password/reset/:token             controllers.ResetPasswordController.view(token: java.util.UUID)
+POST        /password/reset/:token             controllers.ResetPasswordController.submit(token: java.util.UUID)
+GET         /password/change                   controllers.ChangePasswordController.view
+POST        /password/change                   controllers.ChangePasswordController.submit
+
+GET         /account/email/:email              controllers.ActivateAccountController.send(email: String)
+GET         /account/activate/:token           controllers.ActivateAccountController.activate(token: java.util.UUID)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                      controllers.Assets.versioned(file)
+GET         /favicon.ico                       controllers.Assets.at(path="/img/icons/", file="chess-icon-16x16.png")
+->          /webjars                           webjars.Routes

@@ -1,0 +1,166 @@
+@import de.htwg.se.Chess.controller.controllerComponent.GameStatus._
+
+@import play.api.i18n.Messages
+@import play.api.mvc.RequestHeader
+@import org.webjars.play.WebJarsUtil
+@import controllers.AssetsFinder
+@import play.api.data._
+@import forms.TotpSetupForm.Data
+@import com.mohiva.play.silhouette.impl.providers.GoogleTotpCredentials
+@import com.mohiva.play.silhouette.impl.providers.GoogleTotpInfo
+
+@(controller: de.htwg.se.Chess.controller.controllerComponent.ControllerInterface, message: String, user: models.User, totpInfoOpt: Option[GoogleTotpInfo], totpDataOpt: Option[(Form[Data], GoogleTotpCredentials)] = None)(implicit request: RequestHeader,
+        messages: Messages, webJarsUtil: WebJarsUtil, assets: AssetsFinder)
+
+@size = @{
+    controller.grid.size
+}
+
+@playerAtTurnToString = @{
+    controller.playerAtTurnToString
+}
+
+@main("HTWG Chess",  Some(user)) {
+    <script>
+        let left_items = document.getElementById("left-items");
+        let new_item = document.createElement("li");
+        new_item.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  New
+                              </a>
+                              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                  <a class="dropdown-item" onclick="newGame(event)">New</a>
+                                  <a class="dropdown-item" data-toggle="modal" data-target="#newGameWithNames">New Game with Player Name input</a>
+                              </div>`;
+        new_item.className = "nav-item dropdown";
+
+        let edit_item = document.createElement("li");
+        edit_item.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                   Edit
+                               </a>
+                               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                   <a class="dropdown-item" onclick="undo()">Undo</a>
+                                   <a class="dropdown-item" onclick="redo()">Redo</a>
+                                   <a class="dropdown-item" onclick="toggle3DEffect(event)">Toggle 3D Effect</a>
+                               </div>`;
+        left_items.appendChild(new_item);
+        left_items.appendChild(edit_item);
+
+        let content_item = document.getElementById("content");
+        content_item.classList.remove("row");
+        content_item.classList.remove("col");
+        content_item.classList.remove("text-center");
+        content_item.classList.remove("justify-content-center");
+        content_item.classList.remove("align-self-center");
+        content_item.classList.remove("starter-template");
+
+        let request_box = document.getElementById("request-box");
+        request_box.style.marginTop = "0";
+    </script>
+
+    <div class="modal fade" id="newGameWithNames" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Player Names</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <span>Player 1:</span>
+                        </div>
+                        <div class="col">
+                            <input autocomplete="on" id="player-one-name" name="playerOne" type="text" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <span>Player 2:</span>
+                        </div>
+                        <div class="col">
+                            <input autocomplete="on" id="player-two-name" name="playerTwo" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div id="error-box"></div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a onclick="newGameWithNames(event)" id="play-button" class="btn btn-primary" type="button">Play</a>
+                        <!--<a href="/new/#player-one-name/#player-two-name"class="btn btn-primary" type="button">Play</a>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!--<h1 id="Inline-Title" class="card-header">Chess</h1>-->
+
+    <div class="col-md-5" id="notification" style="top: 10px; left: 10px">
+        @if(controller.gameStatus == NEXT_PLAYER) {
+            <div id="message-box" class="alert alert-primary" role="alert">
+                @controller.playerAtTurnToString @message
+            </div>
+        } else if(controller.gameStatus == CHECK_MATE) {
+        <div id="message-box" class="alert alert-danger" role="alert">
+            @controller.playerNotAtTurnToString @message
+        </div>
+        } else if(controller.gameStatus == MOVE_NOT_VALID)  {
+        <div id="message-box" class="alert alert-danger" role="alert">
+            @controller.playerAtTurn @message
+        </div>
+        } else {
+        <div id="message-box" class="alert alert-warning" role="alert">
+            @controller.playerAtTurnToString, @message
+        </div>
+        }
+    </div>
+
+
+    <div class="page-container">
+        <div id="game-container" class="game-container">
+            <div id="game" class="game">
+                @for(row <- 0 until size) {
+                    <div class="c-row">
+                        <span class="number">
+                        @(size - row)
+                        </span>
+                        @for(col <- 0 until size) {
+                            <div id="square-@(row)-@(col)" class="noselect" ondragstart="handleFigureOnDrag(event)">
+                                <div class="piece">
+                                @if(!controller.grid.cell(row, col).isSet) {
+                                    <div class="clear"></div>
+                                }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="clear"></div>
+                }
+                <span class="empty"> </span>
+                @for(letter <- 'A' to 'H') {
+                    <span class="letter" id="letter-@(letter)">@(letter)</span>
+                }
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    let square = $('#square-' + row + "-" + col);
+                    if ((row + col) % 2 !== 0) {
+                        square.addClass('square-white');
+                    } else {
+                        square.addClass('square-black');
+                    }
+                    //
+                }
+            }
+    </script>
+
+    <link id="style" rel="stylesheet" href='@assets.path("styles/chess.css")'/>
+    <script src="@assets.path("javascripts/chess.js")" ></script>
+
+}
